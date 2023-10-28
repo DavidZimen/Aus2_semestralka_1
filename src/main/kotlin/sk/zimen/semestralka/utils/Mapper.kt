@@ -1,9 +1,9 @@
 package sk.zimen.semestralka.utils
 
-import sk.zimen.semestralka.data.GpsPosition
-import sk.zimen.semestralka.data.HeightPos
-import sk.zimen.semestralka.data.PlaceKey
-import sk.zimen.semestralka.data.WidthPos
+import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.api.types.HeightPos
+import sk.zimen.semestralka.api.types.PlaceKey
+import sk.zimen.semestralka.api.types.WidthPos
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import kotlin.math.abs
 

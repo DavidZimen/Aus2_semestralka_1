@@ -1,7 +1,7 @@
 package sk.zimen.semestralka.utils
 
 import org.apache.commons.math3.random.RandomDataGenerator
-import sk.zimen.semestralka.data.GpsPosition
+import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import java.util.*
 

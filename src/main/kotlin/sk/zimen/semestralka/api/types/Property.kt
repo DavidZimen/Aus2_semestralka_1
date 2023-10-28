@@ -1,4 +1,4 @@
-package sk.zimen.semestralka.data
+package sk.zimen.semestralka.api.types
 
 /**
  * Class with data representing Property from assignment.

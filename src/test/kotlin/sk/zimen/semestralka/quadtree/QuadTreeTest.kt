@@ -4,9 +4,9 @@ import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import sk.zimen.semestralka.data.GpsPosition
-import sk.zimen.semestralka.data.Place
-import sk.zimen.semestralka.data.PlaceKey
+import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.api.types.Place
+import sk.zimen.semestralka.api.types.PlaceKey
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator

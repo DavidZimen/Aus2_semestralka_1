@@ -1,4 +1,4 @@
-package sk.zimen.semestralka.data
+package sk.zimen.semestralka.api.types
 
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
