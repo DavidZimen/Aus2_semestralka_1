@@ -20,8 +20,9 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
     bottomRightX: Double = 180.0,
     bottomRightY: Double = -90.0
 ) {
-    val root: Node<K, T> by lazy { createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY) }
-    var maxAllowedDepth = 200
+    var root: Node<K, T> = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
+        protected set
+    var maxAllowedDepth = 10
         protected set
     var size = 0
         protected set
@@ -39,6 +40,10 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
      */
     protected abstract fun createRoot(topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double): Node<K, T>
 
+    // Functions and functional attributes
+    /**
+     * Functional attribute to get current depth of quadtree.
+     */
     val currentDepth: Int
         get() {
             var currentDepth = 0
@@ -51,9 +56,8 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
             return currentDepth
         }
 
-    // Functions and functional attributes
     /**
-     * R
+     * Functional attribute to find out if quadtree is empty.
      */
     val isEmpty: Boolean
         get() = size == 0
@@ -86,6 +90,43 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
     fun delete(item: T) {
         root.findMostEligibleNode(item).delete(item, maxAllowedDepth)
         size--
+    }
+
+    fun balanceFactor() {
+        println("Nodes is top left: " + (root.topLeft?.nodeBalance() ?: 0))
+        println("Nodes is bottom left: " + (root.bottomLeft?.nodeBalance() ?: 0))
+        println("Nodes is top right: " + (root.topRight?.nodeBalance() ?: 0))
+        println("Nodes is bottom right: " + (root.bottomRight?.nodeBalance() ?: 0))
+    }
+
+    /**
+     * Function to change the current height of the [QuadTree].
+     * Takes all data of the current tree and inserts it in new with provided height.
+     * Deletes old Quadtree.
+     */
+    @Throws(IllegalArgumentException::class)
+    fun changeHeight(newHeight: Int) {
+        if (newHeight < 1) throw IllegalArgumentException("Height of quadtree can not be less than 1.")
+
+        val iterator = root.iterator()
+        var dataIterator: MutableIterator<T>
+        var node: Node<K, T>
+
+        with(root.boundary) {
+            root = createRoot(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+            maxAllowedDepth = newHeight
+            size = 0
+        }
+
+        while (iterator.hasNext()) {
+            node = iterator.next()
+            dataIterator = node.dataIterator()
+            while (dataIterator.hasNext()) {
+                insert(dataIterator.next())
+                dataIterator.remove()
+            }
+            node.removeNode()
+        }
     }
 
     /**

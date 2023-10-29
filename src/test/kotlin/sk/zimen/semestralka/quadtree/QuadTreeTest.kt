@@ -21,8 +21,8 @@ import java.util.*
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {
 
-    private val classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(80)
-    private val advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(80)
+    private val classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(10)
+    private val advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(10)
     private val itemsToRemove: Stack<Place> = Stack<Place>()
 
     @BeforeEach
@@ -58,15 +58,15 @@ internal class QuadTreeTest {
     @Test
     @Order(1)
     fun testInsert() {
-        this.testInsert(classicTree)
-        this.testInsert(advancedTree)
+        testInsert(classicTree)
+        testInsert(advancedTree)
     }
 
     @Test
     @Order(2)
     fun testFind() {
-        this.testFind(classicTree)
-        this.testFind(advancedTree)
+        testFind(classicTree)
+        testFind(advancedTree)
     }
 
     @Test
@@ -101,7 +101,18 @@ internal class QuadTreeTest {
         advanced.stop()
         println("Average delete time of CLASSIC: " + classic.time.toDouble() / numberOfDeletes)
         println("Average delete time of ADVANCED: " + advanced.time.toDouble() / numberOfDeletes)
-        println("Ending delete test")
+    }
+
+    @Order(4)
+    @Test
+    fun testChangeHeight() {
+        classicTree.changeHeight(20)
+        advancedTree.changeHeight(20)
+        testInsert(classicTree)
+        testFind(advancedTree)
+        println("New max height of CLASSIC: " + classicTree.maxAllowedDepth + ", current depth: " + classicTree.currentDepth)
+        println("New max height of ADVANCED: " + advancedTree.maxAllowedDepth + ", current depth: " + advancedTree.currentDepth)
+        advancedTree.balanceFactor()
     }
 
     private fun testInsert(tree: QuadTree<PlaceKey, Place>) {

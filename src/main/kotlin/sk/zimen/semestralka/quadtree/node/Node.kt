@@ -264,6 +264,41 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     }
 
     /**
+     * Removes node from the tree.
+     */
+    fun removeNode() {
+        parent?.let {
+            if (topLeft === this) {
+                topLeft = null
+            } else if (bottomLeft === this) {
+                bottomLeft = null
+            } else if (topRight === this) {
+                topRight = null
+            } else if (bottomRight === this) {
+                bottomRight = null
+            }
+        }
+
+        parent = null
+        topLeft = null
+        bottomLeft = null
+        topRight = null
+        bottomRight = null
+    }
+
+    /**
+     * Count how many data are in current node and its children.
+     */
+    fun nodeBalance(): Int {
+        val iterator = this.iterator()
+        var size = 0
+        while (iterator.hasNext()) {
+            size += iterator.next().size
+        }
+        return size
+    }
+
+    /**
      * @param data Provided data.
      * @throws IllegalArgumentException When no data was provided.
      * @return Position where the data belongs in the context of current [ClassicNode].
@@ -348,29 +383,6 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         } else {
             null
         }
-    }
-
-    /**
-     * Removes node from the tree.
-     */
-    protected fun removeNode() {
-        parent?.let {
-            if (topLeft === this) {
-                topLeft = null
-            } else if (bottomLeft === this) {
-                bottomLeft = null
-            } else if (topRight === this) {
-                topRight = null
-            } else if (bottomRight === this) {
-                bottomRight = null
-            }
-        }
-
-        parent = null
-        topLeft = null
-        bottomLeft = null
-        topRight = null
-        bottomRight = null
     }
 
     /**
