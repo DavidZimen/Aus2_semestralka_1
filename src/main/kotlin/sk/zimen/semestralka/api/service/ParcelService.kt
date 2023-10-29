@@ -1,33 +1,82 @@
 package sk.zimen.semestralka.api.service
 
-import sk.zimen.semestralka.api.types.GpsPosition
-import sk.zimen.semestralka.api.types.PlaceKey
-import sk.zimen.semestralka.api.types.Place
+import sk.zimen.semestralka.api.types.*
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
+import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
 import sk.zimen.semestralka.utils.Mapper
 
-class ParcelService(maxDepth: Int? = null) {
+
+class ParcelService private constructor(){
     /**
-     * Main structure for holding all [Place]ies of the application.
+     * Main structure for holding all [Parcel]ies of the application.
      */
-    private val combinedPlaces: QuadTree<PlaceKey, Place>
+    private val parcels: QuadTree<PlaceKey, Parcel> = AdvancedQuadTree(10)
+
+    private val combinedService = CombinedService.getInstance()
 
     init {
-        combinedPlaces = AdvancedQuadTree(maxDepth ?: 20)
+        add(
+            Parcel(
+                100,
+                "Some random desc 1",
+                GpsPosition(20.0, WidthPos.Z, 20.0, HeightPos.S),
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S)
+            )
+        )
+        add(
+            Parcel(
+                200,
+                "Another desc for parcel",
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S),
+                GpsPosition(14.0, WidthPos.Z, 14.0, HeightPos.S)
+            )
+        )
     }
 
-    fun add(place: Place) {
-        combinedPlaces.insert(place)
-        //TODO naplnenie zoznamu parciel
+    fun add(parcel: Parcel) {
+        //parcel.propertiesForParcel = PropertyService.getInstance().find(parcel.key)
+        parcels.insert(parcel)
+        combinedService.add(parcel)
     }
 
-    fun edit(propertyBefore: Place, propertyAfter: Place) {
-        delete(propertyBefore)
-        add(propertyAfter)
+    fun edit(parcelBefore: Parcel, parcelAfter: Parcel) {
+        delete(parcelBefore)
+        add(parcelAfter)
+        combinedService.edit(parcelBefore, parcelAfter)
     }
 
-    fun find(position: GpsPosition): List<Place> = combinedPlaces.find(Mapper.toKey(position))
+    fun find(position: GpsPosition): List<Parcel> {
+        return try {
+            parcels.find(Mapper.toKey(position))
+        } catch (e: NoResultFoundException) {
+            emptyList()
+        }
+    }
 
-    fun delete(place: Place) = combinedPlaces.delete(place)
+    fun find(key: PlaceKey): List<Parcel> {
+        return try {
+            parcels.find(key)
+        } catch (e: NoResultFoundException) {
+            emptyList()
+        }
+    }
+
+    fun delete(parcel: Parcel) {
+        parcels.delete(parcel)
+        combinedService.delete(parcel)
+    }
+
+    companion object {
+        private var instance: ParcelService? = null
+
+        fun getInstance(): ParcelService {
+            if (instance == null) {
+                synchronized(this) {
+                    instance = ParcelService()
+                }
+            }
+            return instance!!
+        }
+    }
 }

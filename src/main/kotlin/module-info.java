@@ -11,6 +11,7 @@ module sk.zimen.semestralka {
     requires commons.math3;
     requires org.apache.commons.collections4;
 
-    opens sk.zimen.semestralka to javafx.fxml;
+    opens sk.zimen.semestralka.ui to javafx.fxml;
+    opens sk.zimen.semestralka.api.types to javafx.base;
     exports sk.zimen.semestralka;
 }

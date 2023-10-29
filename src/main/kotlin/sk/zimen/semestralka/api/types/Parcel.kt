@@ -5,6 +5,9 @@ package sk.zimen.semestralka.api.types
  * @author David Zimen
  */
 class Parcel : Place {
+
+    var propertiesForParcel: List<Property>? = null
+
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : super(
         number, topLeft, bottomRight
     )

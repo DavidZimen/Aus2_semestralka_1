@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.MainPageController">
+   <top>
+      <HBox prefHeight="74.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="124.0" fitWidth="431.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/FRI_H_S_sk_f.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="mainTitle" alignment="CENTER" prefHeight="139.0" prefWidth="906.0" text="Semestrálna práca AUS2" textFill="#153d65">
+               <font>
+                  <Font size="40.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="560.0" prefWidth="279.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="parcelsTab" alignment="CENTER" onMouseClicked="#openParcels" prefHeight="60.0" prefWidth="261.0" userData="Open parcels work">
+               <children>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/icons8-land-24.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="Parcels">
+                     <font>
+                        <Font name="Berlin Sans FB Demi Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox fx:id="properties" alignment="CENTER" onMouseClicked="#openProperties" prefHeight="60.0" prefWidth="261.0" userData="Open properties works">
+               <children>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/icons8-house-24.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Properties">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+            <HBox fx:id="combinedTab" alignment="CENTER" onMouseClicked="#openCombined" prefHeight="60.0" prefWidth="261.0" userData="Open combined works">
+               <children>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/icons8-inland-24.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Combined">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </HBox>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <AnchorPane fx:id="contentDetail" prefHeight="596.0" prefWidth="1058.0" BorderPane.alignment="CENTER"/>
+   </center>
+</BorderPane>

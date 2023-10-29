@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.PropertiesController">
+    <center>
+        <TableView fx:id="propertiesTable" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <columns>
+                <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
+                <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
+                <TableColumn fx:id="top" prefWidth="75.0" text="Top left coordinate">
+                    <columns>
+                        <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Height">
+                            <columns>
+                                <TableColumn fx:id="topWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="topWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
+                            </columns>
+                        </TableColumn>
+                        <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Width">
+                            <columns>
+                                <TableColumn fx:id="topHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="topHeightPos" editable="false" prefWidth="75.0" text="Position" />
+                            </columns>
+                        </TableColumn>
+                    </columns>
+                </TableColumn>
+                <TableColumn fx:id="bottom" prefWidth="75.0" text="Bottom right coordinate">
+                    <columns>
+                        <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Height">
+                            <columns>
+                                <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="bottomWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
+                            </columns>
+                        </TableColumn>
+                        <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Width">
+                            <columns>
+                                <TableColumn fx:id="bottomHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="bottomHeightPos" editable="false" prefWidth="75.0" text="Position" />
+                            </columns>
+                        </TableColumn>
+                    </columns>
+                </TableColumn>
+            </columns>
+        </TableView>
+    </center>
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="60.0" prefWidth="151.0">
+               <children>
+                  <Label text="Width">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="width" prefHeight="25.0" prefWidth="150.0">
+                     <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" right="5.0" top="2.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="151.0">
+               <children>
+                  <Label text="Position">
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <RadioButton fx:id="zPos" mnemonicParsing="false" selected="true" text="Z">
+                           <HBox.margin>
+                              <Insets left="5.0" top="2.0" />
+                           </HBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="widthPos" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="vPos" mnemonicParsing="false" text="V" toggleGroup="$widthPos">
+                           <HBox.margin>
+                              <Insets left="8.0" top="2.0" />
+                           </HBox.margin>
+                        </RadioButton>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="2.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox layoutX="161.0" layoutY="10.0" prefHeight="60.0" prefWidth="151.0">
+               <children>
+                  <Label text="Height">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="height" prefHeight="25.0" prefWidth="150.0">
+                     <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" right="5.0" top="2.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
+            <VBox layoutX="161.0" layoutY="10.0" prefHeight="60.0" prefWidth="151.0">
+               <children>
+                  <Label text="Position">
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <RadioButton fx:id="sPos" mnemonicParsing="false" selected="true" text="S">
+                           <HBox.margin>
+                              <Insets left="5.0" top="2.0" />
+                           </HBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="heightPos" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="jPos" mnemonicParsing="false" text="J" toggleGroup="$heightPos">
+                           <HBox.margin>
+                              <Insets left="8.0" top="2.0" />
+                           </HBox.margin>
+                        </RadioButton>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="2.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="381.0">
+               <children>
+                  <Button fx:id="searchPropertiesButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchProperties" prefHeight="30.0" prefWidth="61.0" text="Search">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="OPEN_HAND" />
+                     </cursor>
+                     <FlowPane.margin>
+                        <Insets right="10.0" />
+                     </FlowPane.margin>
+                  </Button>
+                  <Button fx:id="addPropertyButton" mnemonicParsing="false" onAction="#openAddProperty" text="Add property">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <FlowPane.margin>
+                        <Insets left="10.0" />
+                     </FlowPane.margin>
+                  </Button>
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+   </top>
+</BorderPane>
