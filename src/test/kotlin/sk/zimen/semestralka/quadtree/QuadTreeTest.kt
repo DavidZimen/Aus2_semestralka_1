@@ -21,8 +21,8 @@ import java.util.*
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {
 
-    private val classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(10)
-    private val advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(10)
+    private val classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(20)
+    private val advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(20)
     private val itemsToRemove: Stack<Place> = Stack<Place>()
 
     @BeforeEach
@@ -41,18 +41,10 @@ internal class QuadTreeTest {
                 itemsToRemove.push(place)
             }
         }
-        println(
-            "Insert in classic. Time: " + insertDataToTree(
-                classicTree,
-                items
-            ) + ", Depth: " + classicTree.currentDepth
-        )
-        println(
-            "Insert in advanced. Time: " + insertDataToTree(
-                advancedTree,
-                items
-            ) + ", Depth: " + advancedTree.currentDepth
-        )
+        val avgClassic = insertDataToTree(classicTree, items).toDouble() / items.size
+        val avgAdvanced = insertDataToTree(advancedTree, items).toDouble() / items.size
+        println("Insert in classic. Average time: " + avgClassic + ", Depth: " + classicTree.currentDepth)
+        println("Insert in advanced. Average time: " + avgAdvanced + ", Depth: " + advancedTree.currentDepth)
     }
 
     @Test
@@ -200,7 +192,9 @@ internal class QuadTreeTest {
     private fun insertDataToTree(tree: QuadTree<PlaceKey, Place>, items: List<Place>): Long {
         val watch = StopWatch()
         watch.start()
-        items.forEach(tree::insert)
+        for (item in items) {
+            tree.insert(item)
+        }
         watch.stop()
         return watch.time
     }
