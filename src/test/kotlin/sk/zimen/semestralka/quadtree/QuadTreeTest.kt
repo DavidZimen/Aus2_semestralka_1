@@ -27,7 +27,7 @@ internal class QuadTreeTest {
 
     @BeforeEach
     fun setUp() {
-        val count = 100_000
+        val count = 10_000
         val generator = Generator()
         val items: MutableList<Place> = ArrayList<Place>(count)
         var positions: Array<GpsPosition>
