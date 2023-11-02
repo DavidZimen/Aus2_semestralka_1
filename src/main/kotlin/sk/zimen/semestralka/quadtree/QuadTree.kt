@@ -6,6 +6,7 @@ import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.node.Node
 
+//TODO writing and reading from file
 /**
  * Base fot data structure, which represents Quad Tree.
  * For more information visit [Quad Tree](https://en.wikipedia.org/wiki/Quadtree).
@@ -131,6 +132,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
         return false
     }
 
+    //TODO finish tree optimization function
     fun balanceFactor() {
         println("Nodes is top left: " + (root.topLeft?.nodeBalance() ?: 0))
         println("Nodes is bottom left: " + (root.bottomLeft?.nodeBalance() ?: 0))
