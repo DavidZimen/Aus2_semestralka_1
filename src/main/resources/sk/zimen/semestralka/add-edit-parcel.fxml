@@ -10,7 +10,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="853.0">
                <children>
-                  <Label text="New parcel" textFill="#153d65">
+                  <Label fx:id="header" textFill="#153d65">
                      <font>
                         <Font size="28.0" />
                      </font>
@@ -38,16 +38,16 @@
    </top>
    <center>
       <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="520.0" prefWidth="980.0" BorderPane.alignment="TOP_LEFT">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="160.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="515.0" minWidth="10.0" prefWidth="300.0" />
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="160.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="515.0" minWidth="10.0" prefWidth="300.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="515.0" minWidth="10.0" prefWidth="170.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="515.0" minWidth="10.0" prefWidth="300.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="58.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="95.0" minHeight="0.0" prefHeight="56.0" vgrow="SOMETIMES" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="58.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="95.0" minHeight="0.0" prefHeight="56.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="122.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="89.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="86.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
@@ -55,7 +55,7 @@
             <RowConstraints maxHeight="71.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+         </rowConstraints>
          <children>
             <Label text="Number:">
                <font>
@@ -87,29 +87,29 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="addNumber" prefHeight="32.0" prefWidth="403.0" GridPane.columnIndex="1">
+            <TextField fx:id="number" prefHeight="32.0" prefWidth="403.0" GridPane.columnIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="addWidth" layoutX="126.0" layoutY="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="widthTop" layoutX="126.0" layoutY="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="addHeight" layoutX="126.0" layoutY="120.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <TextField fx:id="heightTop" layoutX="126.0" layoutY="120.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
-                  <RadioButton fx:id="addSPos" mnemonicParsing="false" selected="true" text="S">
+                  <RadioButton fx:id="sPos" mnemonicParsing="false" selected="true" text="S">
                      <toggleGroup>
                         <ToggleGroup fx:id="heightPos" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton contentDisplay="CENTER" mnemonicParsing="false" text="J" toggleGroup="$heightPos">
+                  <RadioButton fx:id="jPos" contentDisplay="CENTER" mnemonicParsing="false" text="J" toggleGroup="$heightPos">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
@@ -118,19 +118,19 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <RadioButton fx:id="addZPos" mnemonicParsing="false" selected="true" text="Z">
+                  <RadioButton fx:id="zPos" mnemonicParsing="false" selected="true" text="Z">
                      <toggleGroup>
                         <ToggleGroup fx:id="widthPos" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="V" toggleGroup="$widthPos">
+                  <RadioButton fx:id="vPos" mnemonicParsing="false" text="V" toggleGroup="$widthPos">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </RadioButton>
                </children>
             </HBox>
-            <TextArea fx:id="addDesc" prefHeight="54.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextArea fx:id="desc" prefHeight="54.0" prefWidth="373.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label layoutX="10.0" layoutY="299.0" text="Width:" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <font>
                   <Font size="14.0" />
@@ -151,38 +151,38 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="addWidthBottom" layoutX="180.0" layoutY="141.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+            <TextField fx:id="widthBottom" layoutX="180.0" layoutY="141.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <HBox alignment="CENTER_LEFT" layoutX="180.0" layoutY="184.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                <children>
-                  <RadioButton fx:id="addZPos1" mnemonicParsing="false" selected="true" text="Z">
+                  <RadioButton fx:id="zPosBottom" mnemonicParsing="false" selected="true" text="Z">
                      <toggleGroup>
                         <ToggleGroup fx:id="widthPosBottom" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="V" toggleGroup="$widthPosBottom">
+                  <RadioButton fx:id="vPosBottom" mnemonicParsing="false" text="V" toggleGroup="$widthPosBottom">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </RadioButton>
                </children>
             </HBox>
-            <TextField fx:id="addHeightBottom" layoutX="180.0" layoutY="341.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
+            <TextField fx:id="heightBottom" layoutX="180.0" layoutY="341.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <HBox alignment="CENTER_LEFT" layoutX="180.0" layoutY="284.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6">
                <children>
-                  <RadioButton fx:id="addSPos1" mnemonicParsing="false" selected="true" text="S">
+                  <RadioButton fx:id="sPosBottom" mnemonicParsing="false" selected="true" text="S">
                      <toggleGroup>
                         <ToggleGroup fx:id="heightPosBottom" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton contentDisplay="CENTER" mnemonicParsing="false" text="J" toggleGroup="$heightPosBottom">
+                  <RadioButton fx:id="jPosBottom" contentDisplay="CENTER" mnemonicParsing="false" text="J" toggleGroup="$heightPosBottom">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>

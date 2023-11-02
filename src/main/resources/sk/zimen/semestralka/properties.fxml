@@ -5,7 +5,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.PropertiesController">
+<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.table_controllers.PropertiesController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
@@ -105,7 +105,7 @@
                <children>
                   <HBox prefHeight="30.0" prefWidth="172.0">
                      <children>
-                        <Button fx:id="searchPropertiesButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchProperties" prefHeight="30.0" prefWidth="61.0" text="Search">
+                        <Button fx:id="searchButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#search" prefHeight="30.0" prefWidth="61.0" text="Search">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,12 +115,12 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Button fx:id="editProperty" mnemonicParsing="false" onAction="#onEdit" text="Edit">
+                  <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEdit" text="Edit">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="deleteProperty" mnemonicParsing="false" onAction="#onDelete" text="Delete">
+                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" text="Delete">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -128,7 +128,7 @@
                         <Insets left="10.0" />
                      </FlowPane.margin>
                   </Button>
-                  <Button fx:id="addPropertyButton" mnemonicParsing="false" onAction="#openAddProperty" text="Add property">
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAdd" text="Add property">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -142,7 +142,7 @@
       </HBox>
    </top>
    <bottom>
-        <TableView fx:id="propertiesTable" prefHeight="570.0" prefWidth="971.0" BorderPane.alignment="CENTER">
+        <TableView fx:id="table" prefHeight="570.0" prefWidth="971.0" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
                 <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />

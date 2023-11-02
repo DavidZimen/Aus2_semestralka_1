@@ -13,6 +13,8 @@ module sk.zimen.semestralka {
     requires java.desktop;
 
     opens sk.zimen.semestralka.ui to javafx.fxml;
+    opens sk.zimen.semestralka.ui.table_controllers to javafx.fxml;
+    opens sk.zimen.semestralka.ui.add_edit_controllers to javafx.fxml;
     opens sk.zimen.semestralka.api.types to javafx.base;
     exports sk.zimen.semestralka;
 }

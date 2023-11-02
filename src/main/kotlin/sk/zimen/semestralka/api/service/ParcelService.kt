@@ -35,35 +35,45 @@ class ParcelService private constructor(){
     }
 
     fun add(parcel: Parcel) {
-        //parcel.propertiesForParcel = PropertyService.getInstance().find(parcel.key)
+        associateProperties(parcel)
         parcels.insert(parcel)
         combinedService.add(parcel)
     }
 
     fun edit(parcelBefore: Parcel, parcelAfter: Parcel) {
+        if (parcelBefore.key != parcelAfter.key) {
+            associateProperties(parcelAfter)
+        }
         parcels.edit(parcelBefore, parcelAfter)
         combinedService.edit(parcelBefore, parcelAfter)
     }
 
-    fun find(position: GpsPosition): List<Parcel> {
+    fun find(position: GpsPosition): MutableList<Parcel> {
         return try {
-            parcels.find(Mapper.toKey(position))
+            parcels.find(Mapper.toKey(position)) as MutableList
         } catch (e: NoResultFoundException) {
-            emptyList()
+            mutableListOf()
         }
     }
 
-    fun find(key: PlaceKey): List<Parcel> {
+    fun find(key: PlaceKey): MutableList<Parcel> {
         return try {
-            parcels.find(key)
+            parcels.find(key) as MutableList
         } catch (e: NoResultFoundException) {
-            emptyList()
+            mutableListOf()
         }
     }
 
     fun delete(parcel: Parcel) {
         parcels.delete(parcel)
         combinedService.delete(parcel)
+    }
+
+    private fun associateProperties(parcel: Parcel) {
+        parcel.propertiesForParcel = PropertyService.getInstance().find(parcel.key)
+        parcel.propertiesForParcel.forEach {
+            it.parcelsForProperty.add(parcel)
+        }
     }
 
     companion object {

@@ -5,9 +5,9 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.ParcelController">
+<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.table_controllers.ParcelController">
     <center>
-        <TableView fx:id="parcelsTable" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <TableView fx:id="table" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <columns>
                 <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
                 <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
@@ -142,27 +142,41 @@
                </children>
             </VBox>
             <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="381.0">
-               <children>
-                  <Button fx:id="searchParcelsButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchParcels" prefHeight="30.0" prefWidth="61.0" text="Search">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <cursor>
-                        <Cursor fx:constant="OPEN_HAND" />
-                     </cursor>
-                     <FlowPane.margin>
-                        <Insets right="10.0" />
-                     </FlowPane.margin>
-                  </Button>
-                  <Button fx:id="addParcelButton" mnemonicParsing="false" onAction="#openAddParcel" text="Add parcel">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <FlowPane.margin>
-                        <Insets left="10.0" />
-                     </FlowPane.margin>
-                  </Button>
-               </children>
+                <children>
+                    <HBox prefHeight="30.0" prefWidth="172.0">
+                        <children>
+                            <Button fx:id="searchButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#search" prefHeight="30.0" prefWidth="61.0" text="Search">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                                <cursor>
+                                    <Cursor fx:constant="OPEN_HAND" />
+                                </cursor>
+                            </Button>
+                        </children>
+                    </HBox>
+                    <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEdit" text="Edit">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Button>
+                    <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDelete" text="Delete">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <FlowPane.margin>
+                            <Insets left="10.0" />
+                        </FlowPane.margin>
+                    </Button>
+                    <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAdd" text="Add parcel">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                        <FlowPane.margin>
+                            <Insets left="10.0" />
+                        </FlowPane.margin>
+                    </Button>
+                </children>
             </FlowPane>
          </children>
       </HBox>

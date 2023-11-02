@@ -6,7 +6,7 @@ package sk.zimen.semestralka.api.types
  */
 class Parcel : Place {
 
-    var propertiesForParcel: List<Property>? = null
+    var propertiesForParcel: MutableList<Property> = mutableListOf()
 
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : super(
         number, topLeft, bottomRight

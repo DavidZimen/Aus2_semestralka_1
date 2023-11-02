@@ -5,9 +5,9 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.CombinedController">
+<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.table_controllers.CombinedController">
     <center>
-        <TableView fx:id="placesTable" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <TableView fx:id="table" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <columns>
                 <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
             <TableColumn fx:id="type" editable="false" prefWidth="100.0" text="Type" />
@@ -144,7 +144,7 @@
             </VBox>
             <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="381.0">
                <children>
-                  <Button fx:id="searchPlacesButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchPlaces" prefHeight="30.0" prefWidth="61.0" text="Search">
+                  <Button fx:id="searchButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#search" prefHeight="30.0" prefWidth="61.0" text="Search">
                      <font>
                         <Font size="14.0" />
                      </font>
