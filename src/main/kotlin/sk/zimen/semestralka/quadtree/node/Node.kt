@@ -49,6 +49,13 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     protected abstract val size: Int
 
     /**
+     * Function to edit data in current node.
+     * @param old Version of item before editing.
+     * @param new Version to be saved.
+     */
+    abstract fun edit(old: T, new: T): T
+
+    /**
      * Function to only add data the list in node.
      * @param item Provided data.
      */
@@ -154,7 +161,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
 
         // check child notes and their data
         for (node in this) {
-            node.dataIterator().forEach { item ->
+            for (item in node.dataIterator()) {
                 if (item.key.toBoundary().intersects(boundary)) {
                     foundData.add(item)
                 }
@@ -166,6 +173,23 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         } else {
             throw NoResultFoundException()
         }
+    }
+
+    @Throws(NoResultFoundException::class, MultipleResultsFoundException::class)
+    fun findSingleItem(item: T): T {
+        val foundData: MutableList<T> = mutableListOf()
+        this.dataIterator().forEach {
+            if (it == item) {
+                foundData.add(it)
+            }
+        }
+
+        if (foundData.isEmpty()) {
+            throw NoResultFoundException("No item match provided item.")
+        } else if (foundData.size > 1) {
+            throw MultipleResultsFoundException("Multiple results match provided item.")
+        }
+        return foundData[0]
     }
 
     /**
@@ -216,6 +240,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
                 }
             }
         }
+        //TODO also add something to collapse nodes to root
     }
 
     /**

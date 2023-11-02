@@ -157,6 +157,7 @@ internal class QuadTreeTest {
         var foundItems: List<Place?>
         var foundItemsSame: List<Place?>?
         var foundItemsInAll: List<Place?>
+
         for (i in 0..99) {
             positions = generator.nextPositions(generator.generateSize())
             placeKey = Mapper.toKey(positions[0], positions[1])

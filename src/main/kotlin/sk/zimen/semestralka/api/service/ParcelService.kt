@@ -41,8 +41,7 @@ class ParcelService private constructor(){
     }
 
     fun edit(parcelBefore: Parcel, parcelAfter: Parcel) {
-        delete(parcelBefore)
-        add(parcelAfter)
+        parcels.edit(parcelBefore, parcelAfter)
         combinedService.edit(parcelBefore, parcelAfter)
     }
 

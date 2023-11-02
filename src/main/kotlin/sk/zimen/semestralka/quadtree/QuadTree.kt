@@ -92,6 +92,45 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
         size--
     }
 
+    /**
+     * Finds old item in quadtree.
+     * - If old item has same key as new, just replace them.
+     * - If keys are different, then delete old and insert new.
+     * @return Reference to new version of item.
+     */
+    fun edit(old: T, new: T): T {
+        val node = root.findMostEligibleNode(old)
+        if (old.key == new.key) {
+            var oldItem = node.findSingleItem(old)
+            oldItem = new
+        } else {
+            node.delete(old, maxAllowedDepth)
+            root.findMostEligibleNode(new).insert(new, maxAllowedDepth)
+        }
+
+        return new
+    }
+
+    /**
+    * Check if [QuadTree] contains provided item.
+    * @param item Provided item.
+    */
+    operator fun contains(item: T): Boolean {
+        var dataIterator: Iterator<T>
+        val nodeIterator: Iterator<Node<K, T>> = root.iterator()
+        var node: Node<K, T>
+        while (nodeIterator.hasNext()) {
+            node = nodeIterator.next()
+            dataIterator = node.dataIterator()
+            while (dataIterator.hasNext()) {
+                if (dataIterator.next() == item) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun balanceFactor() {
         println("Nodes is top left: " + (root.topLeft?.nodeBalance() ?: 0))
         println("Nodes is bottom left: " + (root.bottomLeft?.nodeBalance() ?: 0))
@@ -127,26 +166,6 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
             }
             node.removeNode()
         }
-    }
-
-    /**
-     * Check if [QuadTree] contains provided item.
-     * @param item Provided item.
-     */
-    operator fun contains(item: T): Boolean {
-        var dataIterator: Iterator<T>
-        val nodeIterator: Iterator<Node<K, T>> = root.iterator()
-        var node: Node<K, T>
-        while (nodeIterator.hasNext()) {
-            node = nodeIterator.next()
-            dataIterator = node.dataIterator()
-            while (dataIterator.hasNext()) {
-                if (dataIterator.next() == item) {
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     fun printTree() { }

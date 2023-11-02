@@ -5,7 +5,10 @@ import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
-import javafx.scene.control.*
+import javafx.scene.control.RadioButton
+import javafx.scene.control.TableColumn
+import javafx.scene.control.TableView
+import javafx.scene.control.TextField
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
@@ -54,26 +57,6 @@ class ParcelController : Initializable {
     private lateinit var bottomWidthValue: TableColumn<Parcel, String>
     @FXML
     private lateinit var bottomWidthPos: TableColumn<Parcel, String>
-    @FXML
-    private lateinit var addNumber: TextField
-    @FXML
-    private lateinit var addWidth: TextField
-    @FXML
-    private lateinit var addHeight: TextField
-    @FXML
-    private lateinit var addSPos: RadioButton
-    @FXML
-    private lateinit var addZPos: RadioButton
-    @FXML
-    private lateinit var addDesc: TextArea
-    @FXML
-    private lateinit var addSPos1: RadioButton
-    @FXML
-    private lateinit var addHeightBottom: TextField
-    @FXML
-    private lateinit var addZPos1: RadioButton
-    @FXML
-    private lateinit var addWidthBottom: TextField
 
     fun searchParcels() {
         parcels = FXCollections.observableArrayList(
@@ -90,37 +73,7 @@ class ParcelController : Initializable {
     }
 
     fun openAddParcel() {
-        navigate("add-parcel.fxml")
-    }
-
-    fun onCancel() {
-        navigate("parcels.fxml")
-    }
-
-    fun onSave() {
-        parcelService.add(
-            Parcel(
-                addNumber.text.toInt(),
-                addDesc.text,
-                GpsPosition(
-                    addWidth.text.toDouble(),
-                    if (addZPos.isSelected) WidthPos.Z else WidthPos.V,
-                    addHeight.text.toDouble(),
-                    if (addSPos.isSelected) HeightPos.S else HeightPos.J
-                ),
-                GpsPosition(
-                    addWidthBottom.text.toDouble(),
-                    if (addZPos1.isSelected) WidthPos.Z else WidthPos.V,
-                    addHeightBottom.text.toDouble(),
-                    if (addSPos1.isSelected) HeightPos.S else HeightPos.J
-                ),
-            )
-        )
-        val alert = Alert(Alert.AlertType.NONE, "Success", ButtonType.OK)
-        alert.isResizable = false
-        alert.headerText = "Parcel with provided attributes successfully added."
-        alert.showAndWait()
-        if (alert.result == ButtonType.OK) onCancel()
+        navigate("add-edit-parcel.fxml")
     }
 
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
@@ -139,7 +92,6 @@ class ParcelController : Initializable {
 
     private fun navigate(path: String, search: Boolean = false) {
         val loader = FXMLLoader(Aus2Semestralka::class.java.getResource(path))
-        loader.setController(this)
         borderPane.children.setAll(Pane(loader.load()))
         if (search) searchParcels()
     }

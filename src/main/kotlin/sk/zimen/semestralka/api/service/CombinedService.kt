@@ -19,8 +19,7 @@ class CombinedService private constructor() {
     }
 
     fun edit(placeBefore: Place, placeAfter: Place) {
-        delete(placeBefore)
-        add(placeAfter)
+        combinedPlaces.edit(placeBefore, placeAfter)
     }
 
     fun find(position: GpsPosition): List<Place> {

@@ -18,6 +18,7 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
     private val nonDivisibleData: MutableList<T> = ArrayList()
 
     constructor(level: Int, boundary: Boundary) : super(level, boundary)
+
     constructor(level: Int, parent: Node<K, T>?, boundary: Boundary) : super(level, parent, boundary)
 
     // Functions and functional attributes overrides
@@ -26,6 +27,16 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
 
     override val size: Int
         get() = dataList.size + nonDivisibleData.size
+
+    override fun edit(old: T, new: T): T {
+        val iterator = nonDivisibleData.listIterator()
+        for (item in iterator) {
+            if (item == old) {
+                iterator.set(new)
+            }
+        }
+        return new
+    }
 
     override fun simpleInsert(item: T, p: Position): Boolean {
         return if (p === Position.CURRENT) {

@@ -40,8 +40,7 @@ class PropertyService private constructor() {
     }
 
     fun edit(propertyBefore: Property, propertyAfter: Property) {
-        delete(propertyBefore)
-        add(propertyAfter)
+        properties.edit(propertyBefore, propertyAfter)
         combinedService.edit(propertyBefore, propertyAfter)
     }
 

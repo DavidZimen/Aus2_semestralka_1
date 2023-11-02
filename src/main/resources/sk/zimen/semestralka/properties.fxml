@@ -6,46 +6,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.PropertiesController">
-    <center>
-        <TableView fx:id="propertiesTable" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-            <columns>
-                <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
-                <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
-                <TableColumn fx:id="top" prefWidth="75.0" text="Top left coordinate">
-                    <columns>
-                        <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Height">
-                            <columns>
-                                <TableColumn fx:id="topWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
-                                <TableColumn fx:id="topWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
-                            </columns>
-                        </TableColumn>
-                        <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Width">
-                            <columns>
-                                <TableColumn fx:id="topHeightValue" prefWidth="100.0" text="Value" />
-                                <TableColumn fx:id="topHeightPos" editable="false" prefWidth="75.0" text="Position" />
-                            </columns>
-                        </TableColumn>
-                    </columns>
-                </TableColumn>
-                <TableColumn fx:id="bottom" prefWidth="75.0" text="Bottom right coordinate">
-                    <columns>
-                        <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Height">
-                            <columns>
-                                <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
-                                <TableColumn fx:id="bottomWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
-                            </columns>
-                        </TableColumn>
-                        <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Width">
-                            <columns>
-                                <TableColumn fx:id="bottomHeightValue" prefWidth="100.0" text="Value" />
-                                <TableColumn fx:id="bottomHeightPos" editable="false" prefWidth="75.0" text="Position" />
-                            </columns>
-                        </TableColumn>
-                    </columns>
-                </TableColumn>
-            </columns>
-        </TableView>
-    </center>
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
@@ -141,17 +101,31 @@
                   </HBox>
                </children>
             </VBox>
-            <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="381.0">
+            <FlowPane alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="401.0">
                <children>
-                  <Button fx:id="searchPropertiesButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchProperties" prefHeight="30.0" prefWidth="61.0" text="Search">
+                  <HBox prefHeight="30.0" prefWidth="172.0">
+                     <children>
+                        <Button fx:id="searchPropertiesButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchProperties" prefHeight="30.0" prefWidth="61.0" text="Search">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="OPEN_HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Button fx:id="editProperty" mnemonicParsing="false" onAction="#onEdit" text="Edit">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <cursor>
-                        <Cursor fx:constant="OPEN_HAND" />
-                     </cursor>
+                  </Button>
+                  <Button fx:id="deleteProperty" mnemonicParsing="false" onAction="#onDelete" text="Delete">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <FlowPane.margin>
-                        <Insets right="10.0" />
+                        <Insets left="10.0" />
                      </FlowPane.margin>
                   </Button>
                   <Button fx:id="addPropertyButton" mnemonicParsing="false" onAction="#openAddProperty" text="Add property">
@@ -167,4 +141,44 @@
          </children>
       </HBox>
    </top>
+   <bottom>
+        <TableView fx:id="propertiesTable" prefHeight="570.0" prefWidth="971.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
+                <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
+                <TableColumn fx:id="top" prefWidth="75.0" text="Top left coordinate">
+                    <columns>
+                        <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Height">
+                            <columns>
+                                <TableColumn fx:id="topWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="topWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
+                            </columns>
+                        </TableColumn>
+                        <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Width">
+                            <columns>
+                                <TableColumn fx:id="topHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="topHeightPos" editable="false" prefWidth="75.0" text="Position" />
+                            </columns>
+                        </TableColumn>
+                    </columns>
+                </TableColumn>
+                <TableColumn fx:id="bottom" prefWidth="75.0" text="Bottom right coordinate">
+                    <columns>
+                        <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Height">
+                            <columns>
+                                <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="bottomWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
+                            </columns>
+                        </TableColumn>
+                        <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Width">
+                            <columns>
+                                <TableColumn fx:id="bottomHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="bottomHeightPos" editable="false" prefWidth="75.0" text="Position" />
+                            </columns>
+                        </TableColumn>
+                    </columns>
+                </TableColumn>
+            </columns>
+        </TableView>
+   </bottom>
 </BorderPane>

@@ -10,6 +10,7 @@ module sk.zimen.semestralka {
     requires org.kordamp.bootstrapfx.core;
     requires commons.math3;
     requires org.apache.commons.collections4;
+    requires java.desktop;
 
     opens sk.zimen.semestralka.ui to javafx.fxml;
     opens sk.zimen.semestralka.api.types to javafx.base;

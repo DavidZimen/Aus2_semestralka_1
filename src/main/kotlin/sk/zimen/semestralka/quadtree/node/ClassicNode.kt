@@ -21,6 +21,16 @@ class ClassicNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
     override val size: Int
         get() = dataList.size
 
+    override fun edit(old: T, new: T): T {
+        val iterator = dataList.listIterator()
+        for (item in iterator) {
+            if (item == old) {
+                iterator.set(new)
+            }
+        }
+        return new
+    }
+
     override fun simpleInsert(item: T, p: Position) = dataList.add(item)
 
     override fun dataIterator(): MutableIterator<T> = dataList.iterator()

@@ -16,7 +16,7 @@ class MainPageController {
     private lateinit var mainTitle: Label
 
     fun openParcels() {
-        loadPath("parcels.fxml", ParcelController())
+        loadPath("parcels.fxml")
         mainTitle.text = "Parcels"
     }
 

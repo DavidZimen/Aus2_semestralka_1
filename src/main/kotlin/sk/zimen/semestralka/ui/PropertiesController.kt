@@ -25,6 +25,10 @@ class PropertiesController : Initializable {
     @FXML
     private lateinit var borderPane: BorderPane
     @FXML
+    private lateinit var deleteProperty: Button
+    @FXML
+    private lateinit var editProperty: Button
+    @FXML
     private lateinit var width: TextField
     @FXML
     private lateinit var height: TextField
@@ -54,26 +58,6 @@ class PropertiesController : Initializable {
     private lateinit var bottomWidthValue: TableColumn<Property, String>
     @FXML
     private lateinit var bottomWidthPos: TableColumn<Property, String>
-    @FXML
-    private lateinit var addNumber: TextField
-    @FXML
-    private lateinit var addWidth: TextField
-    @FXML
-    private lateinit var addHeight: TextField
-    @FXML
-    private lateinit var addSPos: RadioButton
-    @FXML
-    private lateinit var addZPos: RadioButton
-    @FXML
-    private lateinit var addDesc: TextArea
-    @FXML
-    private lateinit var addSPos1: RadioButton
-    @FXML
-    private lateinit var addHeightBottom: TextField
-    @FXML
-    private lateinit var addZPos1: RadioButton
-    @FXML
-    private lateinit var addWidthBottom: TextField
 
     fun searchProperties() {
         properties = FXCollections.observableArrayList(
@@ -89,42 +73,31 @@ class PropertiesController : Initializable {
     }
 
     fun openAddProperty() {
-        borderPane.children.setAll(Pane(FXMLLoader(Aus2Semestralka::class.java.getResource("add-property.fxml")).load()))
+        borderPane.children.setAll(Pane(FXMLLoader(Aus2Semestralka::class.java.getResource("add-edit-property.fxml")).load()))
     }
 
-    fun onCancel() {
-        borderPane.children.setAll(Pane(FXMLLoader(Aus2Semestralka::class.java.getResource("properties.fxml")).load()))
+    fun onEdit() {
+
     }
 
-    fun onSave() {
-        propertyService.add(
-            Property(
-                addNumber.text.toInt(),
-                addDesc.text,
-                GpsPosition(
-                    addWidth.text.toDouble(),
-                    if (addZPos.isSelected) WidthPos.Z else WidthPos.V,
-                    addHeight.text.toDouble(),
-                    if (addSPos.isSelected) HeightPos.S else HeightPos.J
-                ),
-                GpsPosition(
-                    addWidthBottom.text.toDouble(),
-                    if (addZPos1.isSelected) WidthPos.Z else WidthPos.V,
-                    addHeightBottom.text.toDouble(),
-                    if (addSPos1.isSelected) HeightPos.S else HeightPos.J
-                ),
-            )
-        )
-        val alert = Alert(Alert.AlertType.NONE, "Success", ButtonType.OK)
+    fun onDelete() {
+        val alert = Alert(Alert.AlertType.CONFIRMATION)
         alert.isResizable = false
-        alert.title = "Success"
-        alert.headerText = "Property with provided attributes successfully added."
+        alert.title = "Property delete"
+        alert.headerText = "Selected property will be deleted. Are you sure you want to continue ?"
         alert.showAndWait()
-        if (alert.result == ButtonType.OK) onCancel()
+        if (alert.result == ButtonType.OK) {
+            val delProperty = propertiesTable.selectionModel.selectedItem
+            propertyService.delete(delProperty)
+            propertiesTable.items.remove(delProperty)
+        } else {
+            alert.close()
+        }
     }
 
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         if (p0?.path?.contains("add") == true) return
+        propertiesTable.selectionModel.selectionMode = SelectionMode.SINGLE
         desc.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.description) }
         number.cellValueFactory = PropertyValueFactory("number")
         topWidthValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.topLeft.width.toString()) }
@@ -135,5 +108,27 @@ class PropertiesController : Initializable {
         bottomWidthPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.widthPosition.toString()) }
         bottomHeightValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.height.toString()) }
         bottomHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.heightPosition.toString()) }
+        deleteProperty.isVisible = false
+        editProperty.isVisible = false
+
+        //initialize visibility of delete and edit button
+        propertiesTable.selectionModel.selectedItemProperty().addListener { _, _, newSelection ->
+            deleteProperty.isVisible = newSelection != null
+            editProperty.isVisible = newSelection != null
+        }
+
+        // unselect item from table
+//        propertiesTable.setOnMouseClicked { event ->
+//            if (event.clickCount == 1) {
+//                val index: Int = propertiesTable.selectionModel.selectedIndex
+//                if (index >= 0) {
+//                    if (propertiesTable.selectionModel.isSelected(index)) {
+//                        propertiesTable.selectionModel.clearSelection(index);
+//                    } else {
+//                        propertiesTable.selectionModel.select(index);
+//                    }
+//                }
+//            }
+//        }
     }
 }
