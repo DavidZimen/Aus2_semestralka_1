@@ -1,8 +1,7 @@
-package sk.zimen.semestralka.ui
+package sk.zimen.semestralka.ui.add_edit_controllers
 
 import sk.zimen.semestralka.api.service.ParcelService
 import sk.zimen.semestralka.api.types.Parcel
-import sk.zimen.semestralka.ui.add_edit_controllers.AbstractAddEditController
 import sk.zimen.semestralka.ui.state.ParcelState
 
 class AddEditParcelController : AbstractAddEditController<Parcel>() {

@@ -5,7 +5,7 @@ import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import java.util.*
 
-
+//TODO adjust generator to generate for specified boundary
 class Generator {
     /**
      * Instance of [RandomDataGenerator].

@@ -17,6 +17,7 @@ import sk.zimen.semestralka.utils.Generator
 import sk.zimen.semestralka.utils.Mapper
 import java.util.*
 
+//TODO write tester with randomized operation generator
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {

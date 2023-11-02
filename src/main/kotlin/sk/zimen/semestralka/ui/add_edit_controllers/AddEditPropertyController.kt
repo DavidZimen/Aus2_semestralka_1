@@ -1,8 +1,7 @@
-package sk.zimen.semestralka.ui
+package sk.zimen.semestralka.ui.add_edit_controllers
 
 import sk.zimen.semestralka.api.service.PropertyService
 import sk.zimen.semestralka.api.types.Property
-import sk.zimen.semestralka.ui.add_edit_controllers.AbstractAddEditController
 import sk.zimen.semestralka.ui.state.PropertyState
 
 class AddEditPropertyController : AbstractAddEditController<Property>() {
