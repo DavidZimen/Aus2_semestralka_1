@@ -29,7 +29,7 @@ internal class QuadTreeTest {
     fun setUp() {
         val count = 10_000
         val generator = Generator()
-        val items: List<Place> = generator.generateItems(Place::class, classicTree.root.boundary, count)
+        val items: List<Place> = generator.generatePlaceItems(Place::class, classicTree.root.boundary, count)
         items.forEachIndexed { index, place -> if (index % 20 == 0) itemsToRemove.add(place) }
 
         val avgClassic = insertDataToTree(classicTree, items).toDouble() / items.size

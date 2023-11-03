@@ -1,10 +1,13 @@
 package sk.zimen.semestralka.quadtree
 
+import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.node.Node
+import sk.zimen.semestralka.utils.Mapper
 
 //TODO writing and reading from file
 /**
@@ -94,6 +97,34 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     fun find(key: K): List<T> = root.find(key)
 
     /**
+     * @return List of all items in quadtree.
+     */
+    fun all(): List<T> {
+        val nodeIterator = root.iterator()
+        val allItems = ArrayList<T>(size)
+
+        while (nodeIterator.hasNext()) {
+            nodeIterator.next().dataIterator().forEach {
+                allItems.add(it)
+            }
+        }
+
+        return allItems
+    }
+
+    /**
+     * Removes all nodes and items from quadtree.
+     */
+    fun clear() {
+        val nodeIterator = root.iterator()
+
+        while (nodeIterator.hasNext()) {
+            nodeIterator.next().removeNode()
+        }
+        size = 0
+    }
+
+    /**
      * Removes item from [QuadTree].
      * @param item Data to be removed.
      */
@@ -155,8 +186,8 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
      * Deletes old Quadtree.
      */
     @Throws(IllegalArgumentException::class)
-    fun changeHeight(newHeight: Int) {
-        if (newHeight < 1) throw IllegalArgumentException("Height of quadtree can not be less than 1.")
+    fun changeHeight(newMaxDepth: Int) {
+        if (newMaxDepth < 1) throw IllegalArgumentException("Height of quadtree can not be less than 1.")
 
         val iterator = root.iterator()
         var dataIterator: MutableIterator<T>
@@ -164,7 +195,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
 
         with(root.boundary) {
             root = createRoot(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
-            maxAllowedDepth = newHeight
+            maxAllowedDepth = newMaxDepth
             size = 0
         }
 
@@ -192,9 +223,18 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         bottomRightY: Double,
     ) {
         this.root = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
-        this.size = 0
-        this.maxAllowedDepth = maxDepth
+        changeHeight(maxDepth)
     }
 
-    fun printTree() { }
+    /**
+     * Changes the boundary on root node, which means the boundary of the whole quadtree.
+     */
+    private fun changeTreeBoundary(
+        topLeftX: Double,
+        topLeftY: Double,
+        bottomRightX: Double,
+        bottomRightY: Double,
+    ) {
+        this.root.boundary = Boundary(doubleArrayOf(topLeftX, topLeftY), doubleArrayOf(bottomRightX, bottomRightY))
+    }
 }

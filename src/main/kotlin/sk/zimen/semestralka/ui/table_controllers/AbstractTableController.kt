@@ -13,7 +13,7 @@ import sk.zimen.semestralka.api.types.HeightPos
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.api.types.WidthPos
 import sk.zimen.semestralka.ui.state.AbstractState
-import sk.zimen.semestralka.utils.DoubleUtils
+import sk.zimen.semestralka.ui.util.allowOnlyDouble
 import java.net.URL
 import java.util.*
 
@@ -120,8 +120,8 @@ abstract class AbstractTableController<T : Place> : Initializable {
         bottomHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.heightPosition.toString()) }
         deleteButton?.isVisible = false
         editButton?.isVisible = false
-        width.allowOnlyNumeric()
-        height.allowOnlyNumeric()
+        width.allowOnlyDouble()
+        height.allowOnlyDouble()
 
         //initialize visibility of delete and edit button
         table.selectionModel.selectedItemProperty().addListener { _, _, newSelection ->
@@ -134,13 +134,5 @@ abstract class AbstractTableController<T : Place> : Initializable {
 
     protected fun navigate(path: String) {
         borderPane.children.setAll(BorderPane(FXMLLoader(Aus2Semestralka::class.java.getResource(path)).load()))
-    }
-
-    private fun TextField.allowOnlyNumeric() {
-        textProperty().addListener { _, _, newValue ->
-            if (!newValue.matches(DoubleUtils.REGEX)) {
-                text = newValue.replace(Regex("[^0-9.]"), "")
-            }
-        }
     }
 }

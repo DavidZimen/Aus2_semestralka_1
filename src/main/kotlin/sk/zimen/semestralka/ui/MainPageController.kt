@@ -3,9 +3,11 @@ package sk.zimen.semestralka.ui
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
+import javafx.scene.control.TextField
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import sk.zimen.semestralka.Aus2Semestralka
+import sk.zimen.semestralka.utils.DoubleUtils
 
 class MainPageController {
 
@@ -28,6 +30,11 @@ class MainPageController {
     fun openProperties() {
         loadPath("properties.fxml")
         mainTitle.text = "Properties"
+    }
+
+    fun openGenerator() {
+        loadPath("generator.fxml")
+        mainTitle.text = "Data generation"
     }
 
     private fun loadPath(path: String, controller: Any? = null) {

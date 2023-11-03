@@ -1,11 +1,13 @@
 package sk.zimen.semestralka.api.service
 
 import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.api.types.Parcel
 import sk.zimen.semestralka.api.types.PlaceKey
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
+import sk.zimen.semestralka.utils.Generator
 import sk.zimen.semestralka.utils.Mapper
 
 class PropertyService private constructor() {
@@ -46,9 +48,19 @@ class PropertyService private constructor() {
         }
     }
 
+    fun all(): MutableList<Property> = properties.all() as MutableList
+
     fun delete(property: Property) {
         properties.delete(property)
         combinedService.delete(property)
+    }
+
+    fun generateData(count: Int, maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) {
+        properties.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+        val items = Generator().generatePlaceItems(Property::class, properties.root.boundary, count)
+        items.forEach {
+            add(it)
+        }
     }
 
     private fun associateParcels(property: Property) {

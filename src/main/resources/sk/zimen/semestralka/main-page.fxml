@@ -76,7 +76,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </HBox>
-            <HBox fx:id="gneratorTab" alignment="CENTER" layoutX="10.0" layoutY="130.0" onMouseClicked="#openCombined" prefHeight="60.0" prefWidth="261.0" userData="Open combined works">
+            <HBox fx:id="generatorTab" alignment="CENTER" layoutX="10.0" layoutY="130.0" onMouseClicked="#openGenerator" prefHeight="60.0" prefWidth="261.0">
                <children>
                   <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>

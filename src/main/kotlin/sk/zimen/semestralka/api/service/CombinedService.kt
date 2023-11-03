@@ -32,6 +32,9 @@ class CombinedService private constructor() {
 
     fun delete(place: Place) = combinedPlaces.delete(place)
 
+    fun changeParameters(maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double)
+            = combinedPlaces.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+
     companion object {
         private var instance: CombinedService? = null
 

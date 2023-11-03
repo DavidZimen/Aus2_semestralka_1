@@ -5,8 +5,9 @@ import org.apache.commons.math3.util.Precision
 
 object DoubleUtils {
 
-    private val EPSILON = 0.0000001
+    private const val EPSILON = 0.0000001
     val REGEX = Regex("(0|([1-9][0-9]*))(\\\\.[0-9]+)?\$")
+    val INTEGER_REGEX = Regex("^[1-9]\\d*|0$")
 
     fun isAGreaterOrEqualsToB(a: Double, b: Double): Boolean {
         return Precision.compareTo(a, b, EPSILON) != -1

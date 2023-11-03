@@ -43,4 +43,9 @@ class PropertiesController : Initializable, AbstractTableController<Property>() 
     override fun deleteFromService(item: Property) {
         propertyService.delete(item)
     }
+
+    fun loadAll() {
+        tableItems = FXCollections.observableArrayList(propertyService.all())
+        table.items = tableItems
+    }
 }

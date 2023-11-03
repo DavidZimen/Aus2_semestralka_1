@@ -19,12 +19,18 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
 
     val dataList: MutableList<T> = ArrayList()
     val level: Int
-    val boundary: Boundary
     var parent: Node<K, T>? = null
     var topLeft: Node<K, T>? = null
     var bottomLeft: Node<K, T>? = null
     var topRight: Node<K, T>? = null
     var bottomRight: Node<K, T>? = null
+    var boundary: Boundary
+        //setter only allowed for root node
+        set(value) {
+            if (level == 0) {
+                field = value
+            }
+        }
 
     constructor(level: Int, boundary: Boundary) {
         this.level = level

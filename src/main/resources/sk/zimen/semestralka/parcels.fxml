@@ -13,13 +13,13 @@
                 <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
                 <TableColumn fx:id="top" prefWidth="75.0" text="Top left coordinate">
                     <columns>
-                        <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Height">
+                        <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Width">
                             <columns>
                                 <TableColumn fx:id="topWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
                                 <TableColumn fx:id="topWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
                             </columns>
                         </TableColumn>
-                        <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Width">
+                        <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Height">
                             <columns>
                                 <TableColumn fx:id="topHeightValue" prefWidth="100.0" text="Value" />
                                 <TableColumn fx:id="topHeightPos" editable="false" prefWidth="75.0" text="Position" />
@@ -29,13 +29,13 @@
                 </TableColumn>
                 <TableColumn fx:id="bottom" prefWidth="75.0" text="Bottom right coordinate">
                     <columns>
-                        <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Height">
+                        <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Width">
                             <columns>
                                 <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
                                 <TableColumn fx:id="bottomWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
                             </columns>
                         </TableColumn>
-                        <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Width">
+                        <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Height">
                             <columns>
                                 <TableColumn fx:id="bottomHeightValue" prefWidth="100.0" text="Value" />
                                 <TableColumn fx:id="bottomHeightPos" editable="false" prefWidth="75.0" text="Position" />
