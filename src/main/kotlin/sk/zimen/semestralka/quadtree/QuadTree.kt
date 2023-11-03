@@ -15,22 +15,26 @@ import sk.zimen.semestralka.quadtree.node.Node
  * @param <K> Key which is used for manipulating the data in structure.
  * Must implement [QuadTreeKey] interface to work correctly.
 </K></T> */
-abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads constructor(
-    topLeftX: Double = -180.0,
-    topLeftY: Double = 90.0,
-    bottomRightX: Double = 180.0,
-    bottomRightY: Double = -90.0
+abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
+    maxDepth: Int,
+    topLeftX: Double,
+    topLeftY: Double,
+    bottomRightX: Double,
+    bottomRightY: Double,
 ) {
-    var root: Node<K, T> = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
+    var root: Node<K, T>
         protected set
-    var maxAllowedDepth = 10
+    var maxAllowedDepth: Int
         protected set
     var size = 0
         protected set
 
-    constructor(maxDepth: Int) : this(-180.0, 90.0, 180.0, -90.0) {
-        maxAllowedDepth = maxDepth
+    init {
+        this.maxAllowedDepth = maxDepth
+        this.root = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
     }
+
+    constructor(maxDepth: Int) : this(maxDepth, -180.0, 90.0, 180.0, -90.0)
 
     /**
      * Creates a root node specific for implementation of [QuadTree].
@@ -39,7 +43,12 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
      * @param bottomRightX Bottom x coordinate of tree boundary.
      * @param bottomRightY Bottom y coordinate of tree boundary.
      */
-    protected abstract fun createRoot(topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double): Node<K, T>
+    protected abstract fun createRoot(
+        topLeftX: Double,
+        topLeftY: Double,
+        bottomRightX: Double,
+        bottomRightY: Double
+    ): Node<K, T>
 
     // Functions and functional attributes
     /**
@@ -168,6 +177,23 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> @JvmOverloads cons
             }
             node.removeNode()
         }
+    }
+
+    /**
+     * Creates new root for quadtree.
+     * USE ONLY when there is only one node.
+     * Children nodes are not being deleted.
+     */
+    fun changeParameters(
+        maxDepth: Int,
+        topLeftX: Double,
+        topLeftY: Double,
+        bottomRightX: Double,
+        bottomRightY: Double,
+    ) {
+        this.root = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
+        this.size = 0
+        this.maxAllowedDepth = maxDepth
     }
 
     fun printTree() { }

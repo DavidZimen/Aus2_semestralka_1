@@ -17,16 +17,13 @@ import sk.zimen.semestralka.quadtree.node.Node
 </T></K> */
 class ClassicQuadTree<K : QuadTreeKey, T : QuadTreeData<K>> : QuadTree<K, T> {
 
-    constructor() : super()
+    constructor(): super(10)
+
+    constructor(maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double)
+            : super(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
 
     constructor(maxAllowedDepth: Int) : super(maxAllowedDepth)
 
-    constructor(topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) : super(
-        topLeftX,
-        topLeftY,
-        bottomRightX,
-        bottomRightY
-    )
 
     override fun createRoot(
         topLeftX: Double,
