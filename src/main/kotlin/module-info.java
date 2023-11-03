@@ -16,6 +16,6 @@ module sk.zimen.semestralka {
     opens sk.zimen.semestralka.ui to javafx.fxml;
     opens sk.zimen.semestralka.ui.table_controllers to javafx.fxml;
     opens sk.zimen.semestralka.ui.add_edit_controllers to javafx.fxml;
-    opens sk.zimen.semestralka.api.types to javafx.base;
+    opens sk.zimen.semestralka.api.types to javafx.base, kotlin.reflect;
     exports sk.zimen.semestralka;
 }

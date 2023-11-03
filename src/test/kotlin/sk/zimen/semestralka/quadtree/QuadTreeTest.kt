@@ -12,7 +12,6 @@ import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.node.AdvancedNode
 import sk.zimen.semestralka.quadtree.node.Node
-import sk.zimen.semestralka.utils.GeneratedSize
 import sk.zimen.semestralka.utils.Generator
 import sk.zimen.semestralka.utils.Mapper
 import java.util.*
@@ -30,18 +29,9 @@ internal class QuadTreeTest {
     fun setUp() {
         val count = 10_000
         val generator = Generator()
-        val items: MutableList<Place> = ArrayList<Place>(count)
-        var positions: Array<GpsPosition>
-        var size: GeneratedSize
-        for (i in 0 until count) {
-            size = generator.generateSize()
-            positions = generator.nextPositions(size)
-            val place = Place(generator.random.nextInt(), positions[0], positions[1])
-            items.add(place)
-            if (i % 25 == 0) {
-                itemsToRemove.push(place)
-            }
-        }
+        val items: List<Place> = generator.generateItems(Place::class, classicTree.root.boundary, count)
+        items.forEachIndexed { index, place -> if (index % 20 == 0) itemsToRemove.add(place) }
+
         val avgClassic = insertDataToTree(classicTree, items).toDouble() / items.size
         val avgAdvanced = insertDataToTree(advancedTree, items).toDouble() / items.size
         println("Insert in classic. Average time: " + avgClassic + ", Depth: " + classicTree.currentDepth)
@@ -152,7 +142,7 @@ internal class QuadTreeTest {
     }
 
     private fun testFind(tree: QuadTree<PlaceKey, Place>) {
-        val generator = Generator()
+        val generator = Generator(180.0, 90.0)
         var positions: Array<GpsPosition>
         var placeKey: PlaceKey
         var foundItems: List<Place?>

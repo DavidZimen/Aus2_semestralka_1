@@ -415,12 +415,6 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      */
     protected fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
 
-    fun printNodeData() {
-        for (data: T in dataList) {
-            data.printData()
-        }
-    }
-
     // ITERATOR CLASS
     /**
      * @return [QuadTreeNodeIterator] instance for current [ClassicNode].

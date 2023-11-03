@@ -7,20 +7,38 @@ import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import java.util.*
+import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-class Generator {
+class Generator() {
     /**
      * Instance of [RandomDataGenerator].
      */
-    val random = Random()
+    private val random = Random()
     private var quadrantWidth: Double = 0.0
     private var quadrantHeight: Double = 0.0
 
-//    fun <K : QuadTreeKey, T : QuadTreeData<K>> generateItems(
-//
-//    )
+    constructor(quadrantWidth: Double, quadrantHeight: Double) : this() {
+        this.quadrantWidth = quadrantWidth
+        this.quadrantHeight = quadrantHeight
+    }
+
+    fun <K : QuadTreeKey, T : QuadTreeData<K>> generateItems(
+        itemClass: KClass<T>,
+        boundary: Boundary,
+        count: Int
+    ): List<T> {
+        this.quadrantWidth = abs(boundary.topLeft[0])
+        this.quadrantHeight = abs(boundary.topLeft[1])
+        val generatedItems = ArrayList<T>(count)
+        while(generatedItems.size < count) {
+            try {
+                generatedItems.add(generateItem(itemClass))
+            } catch (_: Exception) { }
+        }
+        return generatedItems
+    }
 
     fun <K : QuadTreeKey, T : QuadTreeData<K>> generateTree(
         tree: QuadTree<K, T>,
@@ -82,7 +100,7 @@ class Generator {
     }
 
     private fun widthCoordinate(): Double {
-        return random.nextDouble(-quadrantWidth, quadrantHeight)
+        return random.nextDouble(-quadrantWidth, quadrantWidth)
     }
 
     private fun widthCoordinate(lower: Double, size: GeneratedSize): Double {
