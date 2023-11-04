@@ -144,8 +144,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     fun edit(old: T, new: T): T {
         val node = root.findMostEligibleNode(old)
         if (old.key == new.key) {
-            var oldItem = node.findItemsIndex(old)
-            oldItem = new
+            node.edit(old, new)
         } else {
             node.delete(old, maxAllowedDepth)
             root.findMostEligibleNode(new).insert(new, maxAllowedDepth)
@@ -175,13 +174,15 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     }
 
     fun metrics(): QuadTreeMetrics {
-        val keys = Position.values()
-            .toMutableList()
+        val keys = Position.entries
             .filter { it != Position.CURRENT }
 
         val metricsMap = runBlocking {
-            keys.associateWith { async { root.getNodeOnPosition(it).metrics() } }
-                .mapValues { (_, result) -> result.await() }
+            keys.associateWith {
+                async { root.getNodeOnPosition(it).metrics() }
+            }.mapValues { (_, result) ->
+                result.await()
+            }
         }
 
         return QuadTreeMetrics().apply {

@@ -100,7 +100,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
                 && bottomRight == null
 
     /**
-     * Returns boolean value, whether current node is root of the [QuadTree]
+     * Returns boolean value, whether current node is root of the QuadTree
      */
     val isRoot: Boolean
         get() = parent == null
@@ -179,28 +179,6 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         } else {
             throw NoResultFoundException()
         }
-    }
-
-    // TODO as abstract and implement in concrete nodes
-    fun replaceItem(old: T, new: T) {
-
-    }
-
-    @Throws(NoResultFoundException::class, MultipleResultsFoundException::class)
-    fun findItemsIndex(item: T): T {
-        val foundData: MutableList<T> = mutableListOf()
-        this.dataIterator().forEach {
-            if (it == item) {
-                foundData.add(it)
-            }
-        }
-
-        if (foundData.isEmpty()) {
-            throw NoResultFoundException("No item match provided item.")
-        } else if (foundData.size > 1) {
-            throw MultipleResultsFoundException("Multiple results match provided item.")
-        }
-        return foundData[0]
     }
 
     /**

@@ -29,7 +29,12 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
         get() = dataList.size + nonDivisibleData.size
 
     override fun edit(old: T, new: T): T {
-        val iterator = nonDivisibleData.listIterator()
+        val iterator = if (getPosition(new) == Position.CURRENT) {
+            nonDivisibleData.listIterator()
+        } else {
+            dataList.listIterator()
+        }
+
         for (item in iterator) {
             if (item == old) {
                 iterator.set(new)
