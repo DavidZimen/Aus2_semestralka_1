@@ -1,22 +1,16 @@
 package sk.zimen.semestralka.quadtree
 
-import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
-import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.api.types.PlaceKey
-import sk.zimen.semestralka.quadtree.boundary.Boundary
-import sk.zimen.semestralka.quadtree.boundary.Position
-import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
-import sk.zimen.semestralka.quadtree.node.AdvancedNode
-import sk.zimen.semestralka.quadtree.node.Node
+import sk.zimen.semestralka.quadtree.utils.insertDataToTree
+import sk.zimen.semestralka.quadtree.utils.testDelete
+import sk.zimen.semestralka.quadtree.utils.testFind
+import sk.zimen.semestralka.quadtree.utils.testInsert
 import sk.zimen.semestralka.utils.Generator
-import sk.zimen.semestralka.utils.Mapper
 import java.util.*
 
-//TODO write tester with randomized operation generator
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {
@@ -29,7 +23,7 @@ internal class QuadTreeTest {
     fun setUp() {
         val count = 10_000
         val generator = Generator()
-        val items: List<Place> = generator.generatePlaceItems(Place::class, classicTree.root.boundary, count)
+        val items: List<Place> = generator.generateItems(Place::class, classicTree.root.boundary, count)
         items.forEachIndexed { index, place -> if (index % 20 == 0) itemsToRemove.add(place) }
 
         val avgClassic = insertDataToTree(classicTree, items).toDouble() / items.size
@@ -72,10 +66,8 @@ internal class QuadTreeTest {
                 advanced.resume()
                 advancedTree.delete(item)
                 advanced.suspend()
-                this.testInsert(classicTree)
-                this.testInsert(advancedTree)
-                assertFalse(classicTree.contains(item))
-                assertFalse(advancedTree.contains(item))
+                testDelete(classicTree, item)
+                testDelete(advancedTree, item)
             } catch (e: Exception) {
                 println(e.message)
             }
@@ -101,98 +93,5 @@ internal class QuadTreeTest {
         testFind(advancedTree)
         println("New max height of CLASSIC: " + classicTree.maxAllowedDepth + ", current depth: " + classicTree.currentDepth + ", Time: " + classic.time)
         println("New max height of ADVANCED: " + advancedTree.maxAllowedDepth + ", current depth: " + advancedTree.currentDepth + ", Time: " + advanced.time)
-    }
-
-    private fun testInsert(tree: QuadTree<PlaceKey, Place>) {
-        val iterator: Iterator<Node<PlaceKey, Place>> = tree.root.iterator()
-        var node: Node<PlaceKey, Place>
-        var dataIterator: Iterator<Place?>
-        var filteredItems: List<Place?>
-        var data: Place?
-        val treeDepth: Int = tree.currentDepth
-        var size = 0
-        while (iterator.hasNext()) {
-            node = iterator.next()
-            assertTrue(node.level <= tree.maxAllowedDepth)
-            if (node.level == tree.maxAllowedDepth || node.level == treeDepth) {
-                assertNull(node.topLeft)
-                assertNull(node.topRight)
-                assertNull(node.bottomLeft)
-                assertNull(node.bottomRight)
-            } else if (!node.isLeaf || node.level == treeDepth) {
-                val streamNode: Node<PlaceKey, Place> = node
-                filteredItems = streamNode.dataList.filter { item -> streamNode.getPosition(item) != Position.CURRENT }
-                assertTrue(filteredItems.isEmpty())
-            }
-            if (node is AdvancedNode<PlaceKey, Place>) {
-                if (!node.isLeaf) {
-                    assertTrue(node.dataList.isEmpty())
-                }
-            }
-            dataIterator = node.dataIterator()
-            while (dataIterator.hasNext()) {
-                data = dataIterator.next()
-                if (node.level != tree.maxAllowedDepth && !node.isLeaf) {
-                    assertEquals(Position.CURRENT, node.getPosition(data))
-                }
-                size++
-            }
-        }
-        assertEquals(tree.size, size)
-    }
-
-    private fun testFind(tree: QuadTree<PlaceKey, Place>) {
-        val generator = Generator(180.0, 90.0)
-        var positions: Array<GpsPosition>
-        var placeKey: PlaceKey
-        var foundItems: List<Place?>
-        var foundItemsSame: List<Place?>?
-        var foundItemsInAll: List<Place?>
-
-        for (i in 0..99) {
-            positions = generator.nextPositions(generator.generateSize())
-            placeKey = Mapper.toKey(positions[0], positions[1])
-            try {
-                foundItems = tree.find(placeKey)
-                foundItemsSame = tree.find(placeKey)
-            } catch (e: Exception) {
-                foundItems = emptyList<Place>()
-                foundItemsSame = emptyList<Place>()
-            }
-            foundItemsInAll = findInWholeTree(tree, placeKey)
-            assertEquals(foundItemsInAll.size, foundItems.size)
-            assertEquals(foundItems, foundItemsSame) // order does matter
-            assertTrue(CollectionUtils.isEqualCollection(foundItems, foundItemsInAll)) //order does not matter
-        }
-    }
-
-    private fun findInWholeTree(tree: QuadTree<PlaceKey, Place>, key: PlaceKey): List<Place?> {
-        val nodeIterator: NodeIterator<PlaceKey, Place> = tree.root.iterator()
-        val boundary: Boundary = key.toBoundary()
-        val foundItems: MutableList<Place?> = ArrayList<Place?>()
-        var node: Node<PlaceKey, Place>
-        var dataIterator: Iterator<Place>
-        var data: Place
-        while (nodeIterator.hasNext()) {
-            node = nodeIterator.next()
-            dataIterator = node.dataIterator()
-            while (dataIterator.hasNext()) {
-                data = dataIterator.next()
-                if (data.key.toBoundary().intersects(boundary)) {
-                    foundItems.add(data)
-                }
-            }
-        }
-        return foundItems
-    }
-
-    private fun insertDataToTree(tree: QuadTree<PlaceKey, Place>, items: List<Place>): Long {
-        val watch = StopWatch()
-        watch.start()
-        for (item in items) {
-            tree.insert(item)
-        }
-        watch.stop()
-        return watch.time
     }
 }

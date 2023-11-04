@@ -16,7 +16,8 @@ import sk.zimen.semestralka.quadtree.node.Node
 */
 class AdvancedQuadTree<K : QuadTreeKey, T : QuadTreeData<K>> : QuadTree<K, T> {
 
-    constructor(): super(5)
+    constructor()
+            : super(5)
 
     constructor(maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double)
             : super(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)

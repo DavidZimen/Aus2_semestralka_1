@@ -1,15 +1,12 @@
 package sk.zimen.semestralka.quadtree
 
-import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.node.Node
-import sk.zimen.semestralka.utils.Mapper
 
-//TODO writing and reading from file
 /**
  * Base fot data structure, which represents Quad Tree.
  * For more information visit [Quad Tree](https://en.wikipedia.org/wiki/Quadtree).

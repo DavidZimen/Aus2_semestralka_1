@@ -60,7 +60,7 @@ class PropertyService private constructor() {
 
     fun generateData(count: Int, maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) {
         changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
-        val items = Generator().generatePlaceItems(Property::class, properties.root.boundary, count)
+        val items = Generator().generateItems(Property::class, properties.root.boundary, count)
         items.forEach {
             add(it)
         }

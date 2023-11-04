@@ -8,7 +8,6 @@ import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import java.util.*
-import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
@@ -16,22 +15,28 @@ class Generator() {
     /**
      * Instance of [RandomDataGenerator].
      */
-    private val random = Random()
-    private var quadrantWidth: Double = 0.0
-    private var quadrantHeight: Double = 0.0
+    val random = Random()
+    private var leftX: Double = -180.0
+    private var topY: Double = 90.0
+    private var rightX: Double = 180.0
+    private var bottomY: Double = -90.0
 
     constructor(quadrantWidth: Double, quadrantHeight: Double) : this() {
-        this.quadrantWidth = quadrantWidth
-        this.quadrantHeight = quadrantHeight
+        setCoordinates(-quadrantWidth, quadrantHeight, quadrantWidth, -quadrantHeight)
     }
 
-    fun <T : Place> generatePlaceItems(
+    constructor(leftX: Double, topY: Double, rightX: Double, bottomY: Double) : this() {
+        setCoordinates(leftX, topY, rightX, bottomY)
+    }
+
+    fun <T : Place> generateItems(
         itemClass: KClass<T>,
         boundary: Boundary,
         count: Int
-    ): List<T> {
-        this.quadrantWidth = abs(boundary.topLeft[0])
-        this.quadrantHeight = abs(boundary.topLeft[1])
+    ): MutableList<T> {
+        with(boundary) {
+            setCoordinates(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+        }
         val generatedItems = ArrayList<T>(count)
         while(generatedItems.size < count) {
             try {
@@ -46,6 +51,41 @@ class Generator() {
         return generatedItems
     }
 
+    /**
+     * Generates operations from [GeneratedOperation] enum with a given ratio.
+     * @param count Number of operations to be generated.
+     * @param ratio Double array of size 4, where
+     *              0 -> INSERT
+     *              1 -> DELETE
+     *              2 -> EDIT
+     *              3 -> FIND
+     */
+    fun generateOperations(count: Int, ratio: IntArray): Stack<GeneratedOperation>? {
+        if (count < 1 || ratio.size != 4) {
+            return null
+        }
+        val probs = DoubleArray(4)
+        val sum = ratio.sum()
+        ratio.forEachIndexed { index, i ->
+            probs[index] = i.toDouble() / sum
+        }
+
+        val operations = Stack<GeneratedOperation>()
+        for (i in 0 until count) {
+            val probability = random.nextDouble()
+            if (probability < probs[0]) {
+                operations.push(GeneratedOperation.INSERT)
+            } else if (probability < probs[0] + probs[1]) {
+                operations.push(GeneratedOperation.DELETE)
+            } else if (probability < probs[0] + probs[1] + probs[2]) {
+                operations.push(GeneratedOperation.EDIT)
+            } else {
+                operations.push(GeneratedOperation.FIND)
+            }
+        }
+        return operations
+    }
+
     fun <K : QuadTreeKey, T : QuadTreeData<K>> generateTree(
         tree: QuadTree<K, T>,
         itemClass: KClass<T>,
@@ -55,8 +95,8 @@ class Generator() {
         itemCount: Int
     ): MutableList<T> {
         tree.changeParameters(maxDepth, -quadrantWidth, quadrantHeight, quadrantWidth, -quadrantHeight)
-        this.quadrantWidth = quadrantWidth
-        this.quadrantHeight = quadrantHeight
+        this.leftX = quadrantWidth
+        this.topY = quadrantHeight
         val addedItems = ArrayList<T>(itemCount)
         while (tree.size < itemCount) {
             try {
@@ -106,24 +146,24 @@ class Generator() {
     }
 
     private fun widthCoordinate(): Double {
-        return random.nextDouble(-quadrantWidth, quadrantWidth)
+        return random.nextDouble(leftX, rightX)
     }
 
     private fun widthCoordinate(lower: Double, size: GeneratedSize): Double {
         var higher: Double = lower + size.maxSize
-        higher = if (DoubleUtils.isALessOrEqualsToB(higher, quadrantWidth)) higher else quadrantWidth
+        higher = if (DoubleUtils.isALessOrEqualsToB(higher, rightX)) higher else rightX
         return if (higher == lower) {
             higher
         } else random.nextDouble(lower, higher)
     }
 
     private fun heightCoordinate(): Double {
-        return random.nextDouble(-quadrantHeight, quadrantHeight)
+        return random.nextDouble(bottomY, topY)
     }
 
     private fun heightCoordinate(higher: Double, size: GeneratedSize): Double {
         var lower: Double = higher - size.maxSize
-        lower = if (DoubleUtils.isAGreaterOrEqualsToB(lower, -quadrantHeight)) lower else -quadrantHeight
+        lower = if (DoubleUtils.isAGreaterOrEqualsToB(lower, bottomY)) lower else bottomY
         return if (higher == lower) {
             higher
         } else random.nextDouble(lower, higher)
@@ -135,12 +175,15 @@ class Generator() {
                 .map { charset[random.nextInt(charset.length)] }
                 .joinToString("")
     }
+
+    private fun setCoordinates(leftX: Double, topY: Double, rightX: Double, bottomY: Double) {
+        this.leftX = leftX
+        this.topY = topY
+        this.rightX = rightX
+        this.bottomY = bottomY
+    }
 }
 
-/**
- * Enum values to represent max distance between 2 generated [GpsPosition]s.
- * @author David Zimen
- */
 //enum class GeneratedSize(val maxSize: Double) {
 //    XXS(0.000_01),
 //    XS(0.000_1),
@@ -165,3 +208,9 @@ enum class GeneratedSize(val maxSize: Double) {
     XXL(2.0)
 }
 
+enum class GeneratedOperation() {
+    DELETE,
+    INSERT,
+    FIND,
+    EDIT
+}
