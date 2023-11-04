@@ -1,20 +1,21 @@
 package sk.zimen.semestralka.quadtree
 
+import kotlinx.coroutines.*
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
-import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
+import sk.zimen.semestralka.quadtree.metrics.QuadTreeMetrics
 import sk.zimen.semestralka.quadtree.node.Node
 
 /**
  * Base fot data structure, which represents Quad Tree.
  * For more information visit [Quad Tree](https://en.wikipedia.org/wiki/Quadtree).
- * @param <T> Data type to be used in Quad Tree.
- * Must implement [QuadTreeData] interface to work correctly.
- * @param <K> Key which is used for manipulating the data in structure.
- * Must implement [QuadTreeKey] interface to work correctly.
-</K></T> */
+ * - [T] Data type to be used in Quad Tree.
+ *      Must implement [QuadTreeData] interface to work correctly.
+ * - [K] Key which is used for manipulating the data in structure.
+ *      Must implement [QuadTreeKey] interface to work correctly.
+ */
 abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     maxDepth: Int,
     topLeftX: Double,
@@ -27,6 +28,9 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     var maxAllowedDepth: Int
         protected set
     var size = 0
+        protected set
+    var health = 0.0
+        get() = field * 100
         protected set
 
     init {
@@ -55,15 +59,16 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
      * Functional attribute to get current depth of quadtree.
      */
     val currentDepth: Int
-        get() {
-            var currentDepth = 0
-            val it: NodeIterator<K, T> = this.root.iterator()
-            while (it.hasNext()) {
-                val node: Node<K, T> = it.next()
-                if (node.level > currentDepth) currentDepth = node.level
-                if (currentDepth == maxAllowedDepth) break
+        get() = runBlocking {
+            val depthList = with(root) {
+                listOf(
+                    async { topLeft?.depth() ?: 0 },
+                    async { topRight?.depth() ?: 0 },
+                    async { bottomLeft?.depth() ?: 0 },
+                    async { bottomRight?.depth() ?: 0 }
+                )
             }
-            return currentDepth
+            depthList.maxOfOrNull { it.await() } ?: 0
         }
 
     /**
@@ -139,7 +144,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     fun edit(old: T, new: T): T {
         val node = root.findMostEligibleNode(old)
         if (old.key == new.key) {
-            var oldItem = node.findSingleItem(old)
+            var oldItem = node.findItemsIndex(old)
             oldItem = new
         } else {
             node.delete(old, maxAllowedDepth)
@@ -169,12 +174,47 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         return false
     }
 
-    //TODO finish tree optimization function
-    fun balanceFactor() {
-        println("Nodes is top left: " + (root.topLeft?.nodeBalance() ?: 0))
-        println("Nodes is bottom left: " + (root.bottomLeft?.nodeBalance() ?: 0))
-        println("Nodes is top right: " + (root.topRight?.nodeBalance() ?: 0))
-        println("Nodes is bottom right: " + (root.bottomRight?.nodeBalance() ?: 0))
+    fun metrics(): QuadTreeMetrics {
+        val keys = Position.values()
+            .toMutableList()
+            .filter { it != Position.CURRENT }
+
+        val metricsMap = runBlocking {
+            keys.associateWith { async { root.getNodeOnPosition(it).metrics() } }
+                .mapValues { (_, result) -> result.await() }
+        }
+
+        return QuadTreeMetrics().apply {
+            // general metrics
+            with(metricsMap.values) {
+                divisibleDataCount = sumOf { it.divisibleDataCount }
+                depth = maxOf { it.depth }
+                leftX = minOf { it.leftX }
+                rightX = maxOf { it.rightX }
+                topY = maxOf { it.topY }
+                bottomY = minOf { it.bottomY }
+            }
+
+            // get metrics for each top, bottom, left and right
+            with(metricsMap.filter { (key, _) -> key == Position.TOP_LEFT || key ==Position.TOP_RIGHT } ) {
+                nodesTop = values.sumOf { it.nodesCount }
+                dataTop = values.sumOf { it.dataCount }
+            }
+            with(metricsMap.filter { (key, _) -> key == Position.BOTTOM_LEFT || key ==Position.BOTTOM_RIGHT } ) {
+                nodesBottom = values.sumOf { it.nodesCount }
+                dataBottom = values.sumOf { it.dataCount }
+            }
+            with(metricsMap.filter { (key, _) -> key == Position.TOP_LEFT || key == Position.BOTTOM_LEFT } ) {
+                nodesLeft = values.sumOf { it.nodesCount }
+                dataLeft = values.sumOf { it.dataCount }
+            }
+            with(metricsMap.filter { (key, _) -> key == Position.TOP_RIGHT || key ==Position.BOTTOM_RIGHT } ) {
+                nodesRight = values.sumOf { it.nodesCount }
+                dataRight = values.sumOf { it.dataCount }
+            }
+            balanceFactorX = nodesLeft - nodesRight
+            balanceFactorY = nodesTop - nodesBottom
+        }
     }
 
     /**
@@ -219,7 +259,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         bottomRightX: Double,
         bottomRightY: Double,
     ) {
-        this.root = createRoot(topLeftX, topLeftY, bottomRightX, bottomRightY)
+        changeTreeBoundary(topLeftX, topLeftY, bottomRightX, bottomRightY)
         changeHeight(maxDepth)
     }
 

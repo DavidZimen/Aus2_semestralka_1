@@ -65,4 +65,12 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
     }
 
     override fun createNewNode(p: Position): Node<K, T> = AdvancedNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
+
+    override fun divisibleItemsCount(): Int {
+        return if (size > 1) {
+            dataList.size
+        } else {
+            0
+        }
+    }
 }

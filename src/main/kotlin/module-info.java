@@ -12,6 +12,9 @@ module sk.zimen.semestralka {
     requires org.apache.commons.collections4;
     requires java.desktop;
     requires kotlin.reflect;
+    requires kotlinx.coroutines.test;
+    requires kotlinx.coroutines.core;
+    requires kotlinx.coroutines.core.jvm;
 
     opens sk.zimen.semestralka.ui to javafx.fxml;
     opens sk.zimen.semestralka.ui.table_controllers to javafx.fxml;

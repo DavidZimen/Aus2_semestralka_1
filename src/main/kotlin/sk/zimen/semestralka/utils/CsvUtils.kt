@@ -1,6 +1,7 @@
 package sk.zimen.semestralka.utils
 
 import java.io.File
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.reflect.KClass
@@ -26,7 +27,9 @@ object CsvUtils {
     private const val DIRECTORY = "data"
 
     fun initialize() {
-        Files.createDirectory(Path.of(DIRECTORY))
+        try {
+            Files.createDirectory(Path.of(DIRECTORY))
+        } catch (_: FileAlreadyExistsException) { }
     }
 
     fun <T : Any> writeDataToCSV(fileName: String, clazz: KClass<T>, data: List<T>) {

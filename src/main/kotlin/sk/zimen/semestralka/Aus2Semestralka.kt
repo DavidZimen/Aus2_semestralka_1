@@ -5,10 +5,12 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
+import sk.zimen.semestralka.quadtree.metrics.QuadTreeMetrics
 import sk.zimen.semestralka.utils.CsvUtils
 
 class Aus2Semestralka : Application() {
     override fun start(stage: Stage) {
+        println(QuadTreeMetrics())
         CsvUtils.initialize()
         val fxmlLoader = FXMLLoader(Aus2Semestralka::class.java.getResource("main-page.fxml"))
         val scene = Scene(fxmlLoader.load())

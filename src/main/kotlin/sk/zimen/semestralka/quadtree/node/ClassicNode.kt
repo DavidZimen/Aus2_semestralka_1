@@ -40,4 +40,12 @@ class ClassicNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
     override fun canBeDivided(maxDepth: Int): Boolean = !isEmpty && (size > 1 || !isLeaf) && level < maxDepth
 
     override fun createNewNode(p: Position): Node<K, T> = ClassicNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
+
+    override fun divisibleItemsCount(): Int {
+        return if (size > 1) {
+            dataList.filter { getPosition(it) != Position.CURRENT }.size
+        } else {
+            0
+        }
+    }
 }

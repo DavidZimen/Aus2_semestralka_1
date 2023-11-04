@@ -94,4 +94,11 @@ internal class QuadTreeTest {
         println("New max height of CLASSIC: " + classicTree.maxAllowedDepth + ", current depth: " + classicTree.currentDepth + ", Time: " + classic.time)
         println("New max height of ADVANCED: " + advancedTree.maxAllowedDepth + ", current depth: " + advancedTree.currentDepth + ", Time: " + advanced.time)
     }
+
+    @Order(5)
+    @Test
+    fun testMetrics() {
+        advancedTree.changeHeight(20)
+        println(advancedTree.metrics().toString())
+    }
 }

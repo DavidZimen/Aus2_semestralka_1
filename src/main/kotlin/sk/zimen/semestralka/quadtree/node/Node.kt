@@ -9,6 +9,7 @@ import sk.zimen.semestralka.quadtree.exceptions.PositionException
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
+import sk.zimen.semestralka.quadtree.metrics.NodeMetrics
 import java.util.*
 
 /**
@@ -82,6 +83,11 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @return Information whether node can be further divided.
      */
     protected abstract fun canBeDivided(maxDepth: Int): Boolean
+
+    /**
+     * @return Number of items in node which can go into lower nodes if allowed.
+     */
+    protected abstract fun divisibleItemsCount(): Int
 
     // Functions and functional attributes
     /**
@@ -175,8 +181,12 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         }
     }
 
+    fun replaceItem(old: T, new: T) {
+
+    }
+
     @Throws(NoResultFoundException::class, MultipleResultsFoundException::class)
-    fun findSingleItem(item: T): T {
+    fun findItemsIndex(item: T): T {
         val foundData: MutableList<T> = mutableListOf()
         this.dataIterator().forEach {
             if (it == item) {
@@ -312,18 +322,6 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     }
 
     /**
-     * Count how many data are in current node and its children.
-     */
-    fun nodeBalance(): Int {
-        val iterator = this.iterator()
-        var size = 0
-        while (iterator.hasNext()) {
-            size += iterator.next().size
-        }
-        return size
-    }
-
-    /**
      * @param data Provided data.
      * @throws IllegalArgumentException When no data was provided.
      * @return Position where the data belongs in the context of current [ClassicNode].
@@ -364,7 +362,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Can return a null value.
      * @param p Position where to find node.
      */
-    protected fun getNodeOnPosition(p: Position): Node<K, T> {
+    fun getNodeOnPosition(p: Position): Node<K, T> {
         return when (p) {
             Position.CURRENT -> this
             Position.TOP_LEFT -> topLeft!!
@@ -415,7 +413,60 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      */
     protected fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
 
-    // ITERATOR CLASS
+    //FUNCTIONS FOR METRICS
+
+    /**
+     * Calculates [NodeMetrics] for current node.
+     */
+    fun metrics(): NodeMetrics {
+        var depth = 0
+        var nodesCount = 0
+        var dataCount = 0
+        var divisibleItemCount = 0
+        var leftX = 0.0
+        var rightX = 0.0
+        var topY = 0.0
+        var bottomY = 0.0
+
+        val iterator = iterator()
+        while (iterator.hasNext()) {
+            val node = iterator.next()
+            dataCount += node.size
+            nodesCount++
+            if (node.level > depth) depth = node.level
+            if (node.isLeaf) {
+                divisibleItemCount += node.divisibleItemsCount()
+            }
+            for (item in node.dataIterator()) {
+                with(item.key.toBoundary()) {
+                    if (topLeft[0] < leftX) leftX = topLeft[0]
+                    if (topLeft[1] > topY) topY = topLeft[1]
+                    if (bottomRight[0] > rightX) rightX = bottomRight[0]
+                    if (bottomRight[1] < bottomY) bottomY = bottomRight[1]
+                }
+            }
+        }
+
+        return NodeMetrics(dataCount, divisibleItemCount, nodesCount, depth, leftX, rightX, topY, bottomY)
+    }
+
+    /**
+     * Calculates the depth that can be reached from current node.
+     * Returns maximal level from search.
+     * If needed for number of levels between current node and deepest
+     * just calculate result - node.level
+     */
+    fun depth(): Int {
+        var currentDepth = 0
+        val it = iterator()
+        while (it.hasNext()) {
+            val node = it.next()
+            if (node.level > currentDepth) currentDepth = node.level
+        }
+        return currentDepth
+    }
+
+    // ITERATOR CLASS AND FUNCTIONS
     /**
      * @return [QuadTreeNodeIterator] instance for current [ClassicNode].
      */
