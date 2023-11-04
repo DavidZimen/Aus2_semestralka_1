@@ -2,6 +2,7 @@ package sk.zimen.semestralka.api.types
 
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
+import sk.zimen.semestralka.utils.CsvObject
 import sk.zimen.semestralka.utils.Mapper
 
 /**
@@ -9,6 +10,7 @@ import sk.zimen.semestralka.utils.Mapper
  * Implements [QuadTreeData] interface, so it can be inserted into QuadTree.
  * @author David Zimen
  */
+@CsvObject
 open class Place() : QuadTreeData<PlaceKey>() {
 
     var number: Int = 0

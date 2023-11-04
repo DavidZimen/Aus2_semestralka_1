@@ -6,10 +6,10 @@ import javafx.scene.control.*
 import sk.zimen.semestralka.api.service.CombinedService
 import sk.zimen.semestralka.api.service.ParcelService
 import sk.zimen.semestralka.api.service.PropertyService
-import java.net.URL
-import java.util.*
 import sk.zimen.semestralka.ui.util.allowOnlyDouble
 import sk.zimen.semestralka.ui.util.allowOnlyInt
+import java.net.URL
+import java.util.*
 
 class GeneratorController : Initializable {
 
@@ -44,6 +44,22 @@ class GeneratorController : Initializable {
 
         showSpinner(false)
         showSuccessAlert()
+    }
+
+    fun onLoad() {
+        val width = quadWidth.text.toDouble()
+        val height = quadHeight.text.toDouble()
+        val depth = treeDepth.text.toInt()
+
+        propertyService.changeParameters(depth, -width, height, width, -height)
+        propertyService.loadFromFile()
+        parcelService.changeParameters(depth, -width, height, width, -height)
+        parcelService.loadFromFile()
+    }
+
+    fun onSave() {
+        propertyService.saveToFile()
+        parcelService.saveToFile()
     }
 
     override fun initialize(p0: URL?, p1: ResourceBundle?) {

@@ -1,6 +1,8 @@
 package sk.zimen.semestralka.utils
 
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.*
@@ -21,6 +23,11 @@ annotation class CsvExclude
 
 object CsvUtils {
     private const val DELIMITER = ";"
+    private const val DIRECTORY = "data"
+
+    fun initialize() {
+        Files.createDirectory(Path.of(DIRECTORY))
+    }
 
     fun <T : Any> writeDataToCSV(fileName: String, clazz: KClass<T>, data: List<T>) {
         if (data.isEmpty()) return
@@ -32,11 +39,11 @@ object CsvUtils {
         }
 
         val csvData = "$header\n$lines"
-        File(fileName).writeText(csvData)
+        File(DIRECTORY, fileName).writeText(csvData)
     }
 
-    fun <T : Any> readDataFromCSV(fileName: String, clazz: KClass<T>): List<T> {
-        val lines = File(fileName).readText().lines()
+    fun <T : Any> readDataFromCSV(fileName: String, clazz: KClass<T>): MutableList<T> {
+        val lines = File(DIRECTORY, fileName).readText().lines()
         val objects = mutableListOf<T>()
 
         if (lines.isNotEmpty()) {

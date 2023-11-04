@@ -1,9 +1,12 @@
 package sk.zimen.semestralka.api.service
 
-import sk.zimen.semestralka.api.types.*
+import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.api.types.Parcel
+import sk.zimen.semestralka.api.types.PlaceKey
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
+import sk.zimen.semestralka.utils.CsvUtils
 import sk.zimen.semestralka.utils.Generator
 import sk.zimen.semestralka.utils.Mapper
 
@@ -46,15 +49,43 @@ class ParcelService private constructor(){
         }
     }
 
+    fun all(): MutableList<Parcel> = parcels.all() as MutableList
+
     fun delete(parcel: Parcel) {
         parcels.delete(parcel)
         combinedService.delete(parcel)
     }
 
+    fun changeParameters(maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double)
+        = parcels.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+
     fun generateData(count: Int, maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) {
-        parcels.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+        changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
         val items = Generator().generatePlaceItems(Parcel::class, parcels.root.boundary, count)
         items.forEach {
+            add(it)
+        }
+    }
+
+    fun saveToFile() {
+        val items = all()
+        val gpsPositions = ArrayList<GpsPosition>(items.size * 2)
+        items.forEach {
+            gpsPositions.add(it.key.topLeft)
+            gpsPositions.add(it.key.bottomRight)
+        }
+        CsvUtils.writeDataToCSV("parcels.csv", Parcel::class, items)
+        CsvUtils.writeDataToCSV("parcels-positions.csv", GpsPosition::class, gpsPositions)
+    }
+
+    fun loadFromFile() {
+        val items = CsvUtils.readDataFromCSV("parcels.csv", Parcel::class)
+        val gpsPositions = CsvUtils.readDataFromCSV("parcels-positions.csv", GpsPosition::class)
+        gpsPositions.reverse()
+        items.forEach {
+            val topLeft = gpsPositions.removeAt(gpsPositions.size - 1)
+            val bottomRightX = gpsPositions.removeAt(gpsPositions.size - 1)
+            it.key = PlaceKey(topLeft, bottomRightX)
             add(it)
         }
     }

@@ -1,12 +1,12 @@
 package sk.zimen.semestralka.api.service
 
 import sk.zimen.semestralka.api.types.GpsPosition
-import sk.zimen.semestralka.api.types.Parcel
 import sk.zimen.semestralka.api.types.PlaceKey
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
+import sk.zimen.semestralka.utils.CsvUtils
 import sk.zimen.semestralka.utils.Generator
 import sk.zimen.semestralka.utils.Mapper
 
@@ -55,10 +55,36 @@ class PropertyService private constructor() {
         combinedService.delete(property)
     }
 
+    fun changeParameters(maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double)
+        = properties.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+
     fun generateData(count: Int, maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) {
-        properties.changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+        changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
         val items = Generator().generatePlaceItems(Property::class, properties.root.boundary, count)
         items.forEach {
+            add(it)
+        }
+    }
+
+    fun saveToFile() {
+        val items = all()
+        val gpsPositions = ArrayList<GpsPosition>(items.size * 2)
+        items.forEach {
+            gpsPositions.add(it.key.topLeft)
+            gpsPositions.add(it.key.bottomRight)
+        }
+        CsvUtils.writeDataToCSV("properties.csv", Property::class, items)
+        CsvUtils.writeDataToCSV("properties-positions.csv", GpsPosition::class, gpsPositions)
+    }
+
+    fun loadFromFile() {
+        val items = CsvUtils.readDataFromCSV("properties.csv", Property::class)
+        val gpsPositions = CsvUtils.readDataFromCSV("properties-positions.csv", GpsPosition::class)
+        gpsPositions.reverse()
+        items.forEach {
+            val topLeft = gpsPositions.removeAt(gpsPositions.size - 1)
+            val bottomRightX = gpsPositions.removeAt(gpsPositions.size - 1)
+            it.key = PlaceKey(topLeft, bottomRightX)
             add(it)
         }
     }

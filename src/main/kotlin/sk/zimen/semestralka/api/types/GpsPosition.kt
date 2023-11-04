@@ -1,11 +1,13 @@
 package sk.zimen.semestralka.api.types
 
+import sk.zimen.semestralka.utils.CsvObject
 import sk.zimen.semestralka.utils.DoubleUtils
 
 /**
  * Class to hold data about GPS position on map.
  * @author David Zimen
  */
+@CsvObject
 class GpsPosition() {
 
     var width: Double = 0.0
