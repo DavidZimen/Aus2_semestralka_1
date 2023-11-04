@@ -26,7 +26,6 @@ class AddEditParcelController : AbstractAddEditController<Parcel>() {
                 )
                 showSuccessAlert(false)
             } catch (e: Exception) {
-                println(e)
                 showErrorAlert(false)
             }
         }

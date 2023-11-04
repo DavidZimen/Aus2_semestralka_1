@@ -87,7 +87,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     /**
      * @return Number of items in node which can go into lower nodes if allowed.
      */
-    protected abstract fun divisibleItemsCount(): Int
+    protected abstract fun divisibleItems(): List<T>
 
     // Functions and functional attributes
     /**
@@ -233,19 +233,24 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     }
 
     /**
-     * @param p Provided position where to get or create a new [ClassicNode].
-     * @return Node on a position.
-     * @throws PositionException When no position was provided.
+     * Return a node on provided position.
+     * Can't return a null value.
+     * @param p Position where to find node.
      */
-    @Throws(PositionException::class)
-    protected fun getOrCreateNodeOnPosition(p: Position?): Node<K, T> {
+    fun getNodeOnPosition(p: Position): Node<K, T> = getNodeOnPositionOrNull(p)!!
+
+    /**
+     * Return a node on provided position.
+     * Can return a null value.
+     * @param p Position where to find node.
+     */
+    fun getNodeOnPositionOrNull(p: Position): Node<K, T>? {
         return when (p) {
             Position.CURRENT -> this
-            Position.TOP_LEFT -> topLeft ?: createNewNode(p).also { topLeft = it }
-            Position.BOTTOM_LEFT -> bottomLeft ?: createNewNode(p).also { bottomLeft = it }
-            Position.TOP_RIGHT -> topRight ?: createNewNode(p).also { topRight = it }
-            Position.BOTTOM_RIGHT -> bottomRight ?: createNewNode(p).also { bottomRight = it }
-            else -> throw PositionException("No position provided.")
+            Position.TOP_LEFT -> topLeft
+            Position.BOTTOM_LEFT -> bottomLeft
+            Position.TOP_RIGHT -> topRight
+            Position.BOTTOM_RIGHT -> bottomRight
         }
     }
 
@@ -337,17 +342,19 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     }
 
     /**
-     * Return a node on provided position.
-     * Can return a null value.
-     * @param p Position where to find node.
+     * @param p Provided position where to get or create a new [ClassicNode].
+     * @return Node on a position.
+     * @throws PositionException When no position was provided.
      */
-    fun getNodeOnPosition(p: Position): Node<K, T> {
+    @Throws(PositionException::class)
+    protected fun getOrCreateNodeOnPosition(p: Position?): Node<K, T> {
         return when (p) {
             Position.CURRENT -> this
-            Position.TOP_LEFT -> topLeft!!
-            Position.BOTTOM_LEFT -> bottomLeft!!
-            Position.TOP_RIGHT -> topRight!!
-            Position.BOTTOM_RIGHT -> bottomRight!!
+            Position.TOP_LEFT -> topLeft ?: createNewNode(p).also { topLeft = it }
+            Position.BOTTOM_LEFT -> bottomLeft ?: createNewNode(p).also { bottomLeft = it }
+            Position.TOP_RIGHT -> topRight ?: createNewNode(p).also { topRight = it }
+            Position.BOTTOM_RIGHT -> bottomRight ?: createNewNode(p).also { bottomRight = it }
+            else -> throw PositionException("No position provided.")
         }
     }
 
@@ -402,6 +409,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         var nodesCount = 0
         var dataCount = 0
         var divisibleItemCount = 0
+        var potentialDepth = level
         var leftX = 0.0
         var rightX = 0.0
         var topY = 0.0
@@ -413,8 +421,14 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
             dataCount += node.size
             nodesCount++
             if (node.level > depth) depth = node.level
+            if (depth > potentialDepth) potentialDepth = depth
             if (node.isLeaf) {
-                divisibleItemCount += node.divisibleItemsCount()
+                val divisibleItems = node.divisibleItems()
+                divisibleItemCount += divisibleItems.size
+                divisibleItems.forEach {
+                    val potential = node.getPotentialDepth(it)
+                    if (potential > potentialDepth) potentialDepth = potential
+                }
             }
             for (item in node.dataIterator()) {
                 with(item.key.toBoundary()) {
@@ -426,7 +440,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
             }
         }
 
-        return NodeMetrics(dataCount, divisibleItemCount, nodesCount, depth, leftX, rightX, topY, bottomY)
+        return NodeMetrics(dataCount, divisibleItemCount, nodesCount, depth, leftX, rightX, topY, bottomY, potentialDepth)
     }
 
     /**
@@ -443,6 +457,23 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
             if (node.level > currentDepth) currentDepth = node.level
         }
         return currentDepth
+    }
+
+    /**
+     * For provided item it returns depth to which it can go.
+     */
+    private fun getPotentialDepth(item: T): Int {
+        var depth = level
+        val position = getPosition(item)
+
+        if (position == Position.CURRENT) return depth
+
+        var node = createNewNode(position)
+        while (node.getPosition(item) != Position.CURRENT) {
+            node = node.createNewNode(node.getPosition(item))
+            depth = node.level
+        }
+        return depth
     }
 
     // ITERATOR CLASS AND FUNCTIONS

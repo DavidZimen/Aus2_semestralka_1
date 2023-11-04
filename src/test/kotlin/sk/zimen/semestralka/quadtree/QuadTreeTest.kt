@@ -4,7 +4,6 @@ import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.api.types.PlaceKey
-import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.utils.insertDataToTree
 import sk.zimen.semestralka.quadtree.utils.testDelete
@@ -70,9 +69,7 @@ internal class QuadTreeTest {
                 advanced.suspend()
                 testDelete(classicTree, item)
                 testDelete(advancedTree, item)
-            } catch (e: Exception) {
-                println(e.message)
-            }
+            } catch (_: Exception) { }
         }
         classic.stop()
         advanced.stop()
@@ -100,20 +97,19 @@ internal class QuadTreeTest {
     @Order(5)
     @Test
     fun testMetrics() {
-        val boundary = Boundary(advancedTree.root.topRight?.boundary!!.topLeft, advancedTree.root.bottomRight?.boundary!!.bottomRight)
         val items = with(advancedTree.root) {
             Generator().apply {
-                with(getNodeOnPosition(Position.TOP_RIGHT).boundary) {
-                    leftX = topLeft[0] - 10
+                with(getNodeOnPosition(Position.TOP_LEFT).boundary) {
+                    leftX = topLeft[0]
                     topY = topLeft[1]
                 }
-                with(getNodeOnPosition(Position.BOTTOM_RIGHT).boundary) {
+                with(getNodeOnPosition(Position.TOP_RIGHT).boundary) {
                     rightX = bottomRight[0]
-                    bottomY = bottomRight[1]
+                    bottomY = bottomRight[1] - 10
                 }
             }
         }.generateItems(Place::class, 10_000)
-        advancedTree = AdvancedQuadTree(10)
+        advancedTree = AdvancedQuadTree(5)
         insertDataToTree(advancedTree, items)
         var metrics = advancedTree.calculateMetrics()
         advancedTree.updateHealth(metrics)
@@ -123,6 +119,6 @@ internal class QuadTreeTest {
         metrics = advancedTree.calculateMetrics()
         println(metrics.toString())
         println("Health: ${advancedTree.health}")
-        //Assertions.assertTrue(CollectionUtils.isEqualCollection(advancedTree.all(), classicTree.all()))
+        testInsert(advancedTree)
     }
 }

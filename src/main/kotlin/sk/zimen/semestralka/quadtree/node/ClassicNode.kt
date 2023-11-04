@@ -41,11 +41,11 @@ class ClassicNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
 
     override fun createNewNode(p: Position): Node<K, T> = ClassicNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
 
-    override fun divisibleItemsCount(): Int {
+    override fun divisibleItems(): List<T> {
         return if (size > 1) {
-            dataList.filter { getPosition(it) != Position.CURRENT }.size
+            dataList.filter { getPosition(it) != Position.CURRENT }
         } else {
-            0
+            emptyList()
         }
     }
 }

@@ -46,9 +46,7 @@ class Generator() {
                 item.number = random.nextInt()
                 item.description = nextString(random.nextInt(20))
                 generatedItems.add(item)
-            } catch (e: Exception) {
-                println(e.message)
-            }
+            } catch (_: Exception) { }
         }
         return generatedItems
     }

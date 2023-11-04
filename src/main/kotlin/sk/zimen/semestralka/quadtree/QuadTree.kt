@@ -5,9 +5,7 @@ import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
-import sk.zimen.semestralka.quadtree.metrics.QuadTreeMetrics
-import sk.zimen.semestralka.quadtree.metrics.balanceFactor
-import sk.zimen.semestralka.quadtree.metrics.enlargingPercentage
+import sk.zimen.semestralka.quadtree.metrics.*
 import sk.zimen.semestralka.quadtree.node.Node
 import kotlin.math.abs
 
@@ -182,7 +180,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     fun optimise() {
         val metrics = calculateMetrics()
         updateHealth(metrics)
-        if (health >= 0.85 * 100) return
+        //if (health >= 0.85 * 100) return
 
         // initialize to current tree boundary
         var topLeftX: Double
@@ -199,20 +197,25 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
 
         with(metrics) {
             // x axis
-            if (dataBalanceFactorX > 0) {
-                bottomRightX += abs(bottomRightX) * enlargingPercentage(bottomRightX, rightX)
-            } else if (dataBalanceFactorX < 0) {
-                topLeftX -= abs(topLeftX) * enlargingPercentage(topLeftX, leftX)
+            if (abs(dataBalanceFactorX) > MetricsConsts.BALANCE_FACTOR_MIN) {
+                if (dataBalanceFactorX < 0) {
+                    bottomRightX += abs(bottomRightX) * enlargingPercentage(bottomRightX, leftX)
+                } else if (dataBalanceFactorX > 0) {
+                    topLeftX -= abs(topLeftX) * enlargingPercentage(topLeftX, rightX)
+                }
             }
             // y axis
-            if (dataBalanceFactorY > 0) {
-                bottomRightY -= abs(bottomRightY) * enlargingPercentage(bottomRightY, bottomY)
-            } else if (dataBalanceFactorY < 0) {
-                topLeftY += abs(topLeftY) * enlargingPercentage(topLeftY, topY)
+            if (abs(dataBalanceFactorY) > MetricsConsts.BALANCE_FACTOR_MIN) {
+                if (dataBalanceFactorY < 0) {
+                    bottomRightY -= abs(bottomRightY) * enlargingPercentage(bottomRightY, topY)
+                } else if (dataBalanceFactorY > 0) {
+                    topLeftY += abs(topLeftY) * enlargingPercentage(topLeftY, bottomY)
+                }
             }
-            if (depth == maxAllowedDepth) maxDepth++
+            if (potentialDepth > depth) maxDepth = potentialDepth
         }
         changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+        if (currentDepth < maxAllowedDepth) maxAllowedDepth = currentDepth
         updateHealth(calculateMetrics())
     }
 
@@ -226,7 +229,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
 
         val metricsMap = runBlocking {
             keys.associateWith {
-                async { root.getNodeOnPosition(it).metrics() }
+                async { root.getNodeOnPositionOrNull(it)?.metrics() ?: NodeMetrics()}
             }.mapValues { (_, result) ->
                 result.await()
             }
@@ -236,8 +239,9 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
             // general metrics
             with(metricsMap.values) {
                 dataRoot = root.size
-                divisibleDataCount = sumOf { it.divisibleDataCount }
+                divisibleDataSize = sumOf { it.divisibleDataSize }
                 depth = maxOf { it.depth }
+                potentialDepth = maxOf { it.potentialDepth }
                 leftX = minOf { it.leftX }
                 rightX = maxOf { it.rightX }
                 topY = maxOf { it.topY }
@@ -261,8 +265,8 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
                 nodesRight = values.sumOf { it.nodesCount }
                 dataRight = values.sumOf { it.dataCount }
             }
-            balanceFactorX = balanceFactor(nodesLeft - nodesRight, size)
-            balanceFactorY = balanceFactor(nodesTop - nodesBottom, size)
+            balanceFactorX = balanceFactor(nodesLeft - nodesRight, nodesLeft + nodesRight)
+            balanceFactorY = balanceFactor(nodesTop - nodesBottom, nodesTop + nodesBottom)
             dataBalanceFactorX = balanceFactor(dataLeft - dataRight, size)
             dataBalanceFactorY = balanceFactor(dataTop - dataBottom, size)
         }
@@ -274,20 +278,11 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
      * Result is value in interval <-1, 1>
      */
     open fun updateHealth(metrics: QuadTreeMetrics) {
-        val weightBalanceFactorX = 0.2
-        val weightBalanceFactorY = 0.2
-        val weightDataBalanceFactorX = 0.2
-        val weightDataBalanceFactorY = 0.2
-        val weightDivisibleDataCount = 0.15
-        val weightHeight = 0.05
-
         with(metrics) {
-            health = weightBalanceFactorX * (1.0 - abs(balanceFactorX)) +
-                    weightBalanceFactorY * (1.0 - abs(balanceFactorY)) +
-                    weightDataBalanceFactorX * (1.0 - abs(dataBalanceFactorX)) +
-                    weightDataBalanceFactorY * (1.0 - abs(dataBalanceFactorY)) +
-                    weightDivisibleDataCount * (divisibleDataCount.toDouble() / (nodesTop + nodesBottom)) +
-                    weightHeight * (depth.toDouble() / maxAllowedDepth)
+            health = MetricsConsts.WEIGHT_BALANCE_X * (1.0 - abs(dataBalanceFactorX)) +
+                    MetricsConsts.WEIGHT_BALANCE_Y * (1.0 - abs(dataBalanceFactorY)) +
+                    MetricsConsts.WEIGHT_DIVISIBLE_FACTOR * divisibleDataFactor(divisibleDataSize, size) +
+                    MetricsConsts.WEIGHT_TREE_HEIGHT * (depth.toDouble() / maxAllowedDepth)
         }
     }
 
