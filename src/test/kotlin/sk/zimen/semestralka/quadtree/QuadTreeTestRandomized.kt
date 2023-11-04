@@ -14,7 +14,7 @@ internal class QuadTreeTestRandomized {
         val itemsCount = 10_000
         val tree = AdvancedQuadTree<PlaceKey, Place>(10)
         val generator = Generator()
-        val items = generator.generateItems(Place::class, tree.root.boundary, itemsCount)
+        val items = generator.generateItems(Place::class, itemsCount, tree.root.boundary)
         insertDataToTree(tree, items)
 
         // prepare operations
@@ -30,7 +30,7 @@ internal class QuadTreeTestRandomized {
                     testFind(tree)
                 }
                 GeneratedOperation.INSERT -> {
-                    val item = generator.generateItems(Place::class, tree.root.boundary, 1)[0]
+                    val item = generator.generateItems(Place::class, 1, tree.root.boundary)[0]
                     tree.insert(item)
                     testInsert(tree, item)
                 }
@@ -40,7 +40,7 @@ internal class QuadTreeTestRandomized {
                     testDelete(tree, deletedItem)
                 }
                 GeneratedOperation.EDIT -> {
-                    val newItem = generator.generateItems(Place::class, tree.root.boundary, 1)[0]
+                    val newItem = generator.generateItems(Place::class, 1, tree.root.boundary)[0]
                     val oldItem = items.removeAt(generator.random.nextInt(0, items.size))
                     tree.edit(oldItem, newItem)
                     testEdit(tree, oldItem, newItem)

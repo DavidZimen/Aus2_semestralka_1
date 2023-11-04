@@ -61,7 +61,7 @@ class ParcelService private constructor(){
 
     fun generateData(count: Int, maxDepth: Int, topLeftX: Double, topLeftY: Double, bottomRightX: Double, bottomRightY: Double) {
         changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
-        val items = Generator().generateItems(Parcel::class, parcels.root.boundary, count)
+        val items = Generator().generateItems(Parcel::class, count, parcels.root.boundary)
         items.forEach {
             add(it)
         }

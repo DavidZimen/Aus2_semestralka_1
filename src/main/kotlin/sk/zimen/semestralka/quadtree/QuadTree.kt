@@ -6,7 +6,10 @@ import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.metrics.QuadTreeMetrics
+import sk.zimen.semestralka.quadtree.metrics.balanceFactor
+import sk.zimen.semestralka.quadtree.metrics.enlargingPercentage
 import sk.zimen.semestralka.quadtree.node.Node
+import kotlin.math.abs
 
 /**
  * Base fot data structure, which represents Quad Tree.
@@ -173,7 +176,51 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         return false
     }
 
-    fun metrics(): QuadTreeMetrics {
+    /**
+     * Optimizes QuadTree based on currently calculated metrics.
+     */
+    fun optimise() {
+        val metrics = calculateMetrics()
+        updateHealth(metrics)
+        if (health >= 0.85 * 100) return
+
+        // initialize to current tree boundary
+        var topLeftX: Double
+        var topLeftY: Double
+        var bottomRightX: Double
+        var bottomRightY: Double
+        var maxDepth = maxAllowedDepth
+        with(root.boundary) {
+            topLeftX = topLeft[0]
+            topLeftY = topLeft[1]
+            bottomRightX = bottomRight[0]
+            bottomRightY = bottomRight[1]
+        }
+
+        with(metrics) {
+            // x axis
+            if (dataBalanceFactorX > 0) {
+                bottomRightX += abs(bottomRightX) * enlargingPercentage(bottomRightX, rightX)
+            } else if (dataBalanceFactorX < 0) {
+                topLeftX -= abs(topLeftX) * enlargingPercentage(topLeftX, leftX)
+            }
+            // y axis
+            if (dataBalanceFactorY > 0) {
+                bottomRightY -= abs(bottomRightY) * enlargingPercentage(bottomRightY, bottomY)
+            } else if (dataBalanceFactorY < 0) {
+                topLeftY += abs(topLeftY) * enlargingPercentage(topLeftY, topY)
+            }
+            if (depth == maxAllowedDepth) maxDepth++
+        }
+        changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
+        updateHealth(calculateMetrics())
+    }
+
+    /**
+     * Function, that constructs [QuadTreeMetrics] from
+     * its children [NodeMetrics].
+     */
+    fun calculateMetrics(): QuadTreeMetrics {
         val keys = Position.entries
             .filter { it != Position.CURRENT }
 
@@ -188,6 +235,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         return QuadTreeMetrics().apply {
             // general metrics
             with(metricsMap.values) {
+                dataRoot = root.size
                 divisibleDataCount = sumOf { it.divisibleDataCount }
                 depth = maxOf { it.depth }
                 leftX = minOf { it.leftX }
@@ -213,8 +261,33 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
                 nodesRight = values.sumOf { it.nodesCount }
                 dataRight = values.sumOf { it.dataCount }
             }
-            balanceFactorX = nodesLeft - nodesRight
-            balanceFactorY = nodesTop - nodesBottom
+            balanceFactorX = balanceFactor(nodesLeft - nodesRight, size)
+            balanceFactorY = balanceFactor(nodesTop - nodesBottom, size)
+            dataBalanceFactorX = balanceFactor(dataLeft - dataRight, size)
+            dataBalanceFactorY = balanceFactor(dataTop - dataBottom, size)
+        }
+    }
+
+    /**
+     * Calculates new value for QuadTree health based on
+     * weight given to attributes of [metrics].
+     * Result is value in interval <-1, 1>
+     */
+    open fun updateHealth(metrics: QuadTreeMetrics) {
+        val weightBalanceFactorX = 0.2
+        val weightBalanceFactorY = 0.2
+        val weightDataBalanceFactorX = 0.2
+        val weightDataBalanceFactorY = 0.2
+        val weightDivisibleDataCount = 0.15
+        val weightHeight = 0.05
+
+        with(metrics) {
+            health = weightBalanceFactorX * (1.0 - abs(balanceFactorX)) +
+                    weightBalanceFactorY * (1.0 - abs(balanceFactorY)) +
+                    weightDataBalanceFactorX * (1.0 - abs(dataBalanceFactorX)) +
+                    weightDataBalanceFactorY * (1.0 - abs(dataBalanceFactorY)) +
+                    weightDivisibleDataCount * (divisibleDataCount.toDouble() / (nodesTop + nodesBottom)) +
+                    weightHeight * (depth.toDouble() / maxAllowedDepth)
         }
     }
 

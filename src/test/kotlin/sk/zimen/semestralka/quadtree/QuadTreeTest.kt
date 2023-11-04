@@ -4,6 +4,8 @@ import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.api.types.PlaceKey
+import sk.zimen.semestralka.quadtree.boundary.Boundary
+import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.utils.insertDataToTree
 import sk.zimen.semestralka.quadtree.utils.testDelete
 import sk.zimen.semestralka.quadtree.utils.testFind
@@ -15,15 +17,15 @@ import java.util.*
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {
 
-    private val classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(10)
-    private val advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(10)
-    private val itemsToRemove: Stack<Place> = Stack<Place>()
+    private var classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(10)
+    private var advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(10)
+    private var itemsToRemove: Stack<Place> = Stack<Place>()
 
     @BeforeEach
     fun setUp() {
         val count = 10_000
         val generator = Generator()
-        val items: List<Place> = generator.generateItems(Place::class, classicTree.root.boundary, count)
+        val items: List<Place> = generator.generateItems(Place::class, count, classicTree.root.boundary)
         items.forEachIndexed { index, place -> if (index % 20 == 0) itemsToRemove.add(place) }
 
         val avgClassic = insertDataToTree(classicTree, items).toDouble() / items.size
@@ -98,7 +100,29 @@ internal class QuadTreeTest {
     @Order(5)
     @Test
     fun testMetrics() {
-        advancedTree.changeHeight(20)
-        println(advancedTree.metrics().toString())
+        val boundary = Boundary(advancedTree.root.topRight?.boundary!!.topLeft, advancedTree.root.bottomRight?.boundary!!.bottomRight)
+        val items = with(advancedTree.root) {
+            Generator().apply {
+                with(getNodeOnPosition(Position.TOP_RIGHT).boundary) {
+                    leftX = topLeft[0] - 10
+                    topY = topLeft[1]
+                }
+                with(getNodeOnPosition(Position.BOTTOM_RIGHT).boundary) {
+                    rightX = bottomRight[0]
+                    bottomY = bottomRight[1]
+                }
+            }
+        }.generateItems(Place::class, 10_000)
+        advancedTree = AdvancedQuadTree(10)
+        insertDataToTree(advancedTree, items)
+        var metrics = advancedTree.calculateMetrics()
+        advancedTree.updateHealth(metrics)
+        println(metrics.toString())
+        println("Health: ${advancedTree.health}\n\n")
+        advancedTree.optimise()
+        metrics = advancedTree.calculateMetrics()
+        println(metrics.toString())
+        println("Health: ${advancedTree.health}")
+        //Assertions.assertTrue(CollectionUtils.isEqualCollection(advancedTree.all(), classicTree.all()))
     }
 }

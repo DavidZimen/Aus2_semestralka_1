@@ -16,10 +16,10 @@ class Generator() {
      * Instance of [RandomDataGenerator].
      */
     val random = Random()
-    private var leftX: Double = -180.0
-    private var topY: Double = 90.0
-    private var rightX: Double = 180.0
-    private var bottomY: Double = -90.0
+    var leftX: Double = -180.0
+    var topY: Double = 90.0
+    var rightX: Double = 180.0
+    var bottomY: Double = -90.0
 
     constructor(quadrantWidth: Double, quadrantHeight: Double) : this() {
         setCoordinates(-quadrantWidth, quadrantHeight, quadrantWidth, -quadrantHeight)
@@ -31,11 +31,13 @@ class Generator() {
 
     fun <T : Place> generateItems(
         itemClass: KClass<T>,
-        boundary: Boundary,
-        count: Int
+        count: Int,
+        boundary: Boundary? = null
     ): MutableList<T> {
-        with(boundary) {
-            setCoordinates(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+        if (boundary != null) {
+            with(boundary) {
+                setCoordinates(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+            }
         }
         val generatedItems = ArrayList<T>(count)
         while(generatedItems.size < count) {

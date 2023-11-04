@@ -42,12 +42,12 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     /**
      * Returns boolean flag, if current node has no elements.
      */
-    protected abstract val isEmpty: Boolean
+    abstract val isEmpty: Boolean
 
     /**
      * @return Number of elements in node.
      */
-    protected abstract val size: Int
+    abstract val size: Int
 
     /**
      * Function to edit data in current node.
