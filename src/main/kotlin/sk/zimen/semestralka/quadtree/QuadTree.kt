@@ -4,7 +4,6 @@ import kotlinx.coroutines.*
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.metrics.*
 import sk.zimen.semestralka.quadtree.node.Node
 import kotlin.math.abs
@@ -14,17 +13,15 @@ import kotlin.math.abs
  * For more information visit [Quad Tree](https://en.wikipedia.org/wiki/Quadtree).
  * - [T] Data type to be used in Quad Tree.
  *      Must implement [QuadTreeData] interface to work correctly.
- * - [K] Key which is used for manipulating the data in structure.
- *      Must implement [QuadTreeKey] interface to work correctly.
  */
-abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
+abstract class QuadTree<T : QuadTreeData> (
     maxDepth: Int,
     topLeftX: Double,
     topLeftY: Double,
     bottomRightX: Double,
     bottomRightY: Double,
 ) {
-    var root: Node<K, T>
+    var root: Node<T>
         protected set
     var maxAllowedDepth: Int
         protected set
@@ -53,7 +50,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
         topLeftY: Double,
         bottomRightX: Double,
         bottomRightY: Double
-    ): Node<K, T>
+    ): Node<T>
 
     // Functions and functional attributes
     /**
@@ -95,9 +92,9 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
 
     /**
      * Find all data that where keys are intersecting with provided key
-     * @param key Provided key
+     * @param boundary Provided boundary for searching.
      */
-    fun find(key: K): List<T> = root.find(key)
+    fun find(boundary: Boundary): List<T> = root.find(boundary)
 
     /**
      * @return List of all items in quadtree.
@@ -144,7 +141,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
      */
     fun edit(old: T, new: T): T {
         val node = root.findMostEligibleNode(old)
-        if (old.key == new.key) {
+        if (old.getBoundary() == new.getBoundary()) {
             node.edit(old, new)
         } else {
             node.delete(old, maxAllowedDepth)
@@ -160,8 +157,8 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
     */
     operator fun contains(item: T): Boolean {
         var dataIterator: Iterator<T>
-        val nodeIterator: Iterator<Node<K, T>> = root.iterator()
-        var node: Node<K, T>
+        val nodeIterator: Iterator<Node<T>> = root.iterator()
+        var node: Node<T>
         while (nodeIterator.hasNext()) {
             node = nodeIterator.next()
             dataIterator = node.dataIterator()
@@ -297,7 +294,7 @@ abstract class QuadTree<K : QuadTreeKey, T : QuadTreeData<K>> (
 
         val iterator = root.iterator()
         var dataIterator: MutableIterator<T>
-        var node: Node<K, T>
+        var node: Node<T>
 
         with(root.boundary) {
             root = createRoot(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])

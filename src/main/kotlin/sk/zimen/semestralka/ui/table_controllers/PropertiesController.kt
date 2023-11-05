@@ -30,6 +30,11 @@ class PropertiesController : Initializable, AbstractTableController<Property>() 
         navigate("add-edit-property.fxml")
     }
 
+    override fun loadAll() {
+        tableItems = FXCollections.observableArrayList(propertyService.all())
+        table.items = tableItems
+    }
+
     override fun initState() {
         state = PropertyState.getInstance()
         super.initState()
@@ -42,10 +47,5 @@ class PropertiesController : Initializable, AbstractTableController<Property>() 
 
     override fun deleteFromService(item: Property) {
         propertyService.delete(item)
-    }
-
-    fun loadAll() {
-        tableItems = FXCollections.observableArrayList(propertyService.all())
-        table.items = tableItems
     }
 }

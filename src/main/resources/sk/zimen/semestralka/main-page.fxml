@@ -80,10 +80,10 @@
                <children>
                   <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@icons/icons8-generator-32.png" />
+                        <Image url="@icons/icons8-c-drive-2-50.png" />
                      </image>
                   </ImageView>
-                  <Label text="Generator">
+                  <Label text="Storage">
                      <font>
                         <Font size="24.0" />
                      </font>

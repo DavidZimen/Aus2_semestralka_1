@@ -6,27 +6,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.GeneratorController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.storage_controllers.GeneratorController">
    <top>
       <HBox alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="980.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="loadButton" mnemonicParsing="false" onAction="#onLoad" text="Load from files">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSave" text="Save to files">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#onGenerate" text="Generate">
+            <Button fx:id="button" mnemonicParsing="false" onAction="#onGenerate" text="Generate">
                <font>
                   <Font size="14.0" />
                </font>

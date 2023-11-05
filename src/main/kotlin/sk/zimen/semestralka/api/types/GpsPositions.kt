@@ -1,23 +1,16 @@
 package sk.zimen.semestralka.api.types
 
-import sk.zimen.semestralka.quadtree.boundary.Boundary
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
-import sk.zimen.semestralka.utils.Mapper
-
 /**
  * Class that represent key of [Place], that will be stored in QuadTree.
  * @author David Zimen
  */
-data class PlaceKey(val topLeft: GpsPosition, val bottomRight: GpsPosition) : QuadTreeKey {
-    override fun toBoundary(): Boundary {
-        return Mapper.toBoundary(topLeft, bottomRight)
-    }
+data class GpsPositions(val topLeft: GpsPosition, val bottomRight: GpsPosition) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
-        return if (other is PlaceKey) {
+        return if (other is GpsPositions) {
             topLeft == other.topLeft && bottomRight == other.bottomRight
         } else false
     }

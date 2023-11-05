@@ -3,7 +3,6 @@ package sk.zimen.semestralka.quadtree
 import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
 import sk.zimen.semestralka.api.types.Place
-import sk.zimen.semestralka.api.types.PlaceKey
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.utils.insertDataToTree
 import sk.zimen.semestralka.quadtree.utils.testDelete
@@ -16,8 +15,8 @@ import java.util.*
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class QuadTreeTest {
 
-    private var classicTree: ClassicQuadTree<PlaceKey, Place> = ClassicQuadTree(10)
-    private var advancedTree: AdvancedQuadTree<PlaceKey, Place> = AdvancedQuadTree(10)
+    private var classicTree: ClassicQuadTree<Place> = ClassicQuadTree(10)
+    private var advancedTree: AdvancedQuadTree<Place> = AdvancedQuadTree(10)
     private var itemsToRemove: Stack<Place> = Stack<Place>()
 
     @BeforeEach

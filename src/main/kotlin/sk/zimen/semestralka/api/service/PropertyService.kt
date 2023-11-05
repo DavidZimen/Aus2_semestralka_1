@@ -1,7 +1,7 @@
 package sk.zimen.semestralka.api.service
 
 import sk.zimen.semestralka.api.types.GpsPosition
-import sk.zimen.semestralka.api.types.PlaceKey
+import sk.zimen.semestralka.api.types.GpsPositions
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
@@ -14,7 +14,7 @@ class PropertyService private constructor() {
     /**
      * Main structure for holding all [Property]ies of the application.
      */
-    private val properties: QuadTree<PlaceKey, Property> = AdvancedQuadTree(10)
+    private val properties: QuadTree<Property> = AdvancedQuadTree(10)
 
     private val combinedService = CombinedService.getInstance()
 
@@ -25,7 +25,7 @@ class PropertyService private constructor() {
     }
 
     fun edit(propertyBefore: Property, propertyAfter: Property) {
-        if (propertyBefore.key != propertyAfter.key) {
+        if (propertyBefore.positions != propertyAfter.positions) {
             associateParcels(propertyAfter)
         }
         properties.edit(propertyBefore, propertyAfter)
@@ -34,15 +34,15 @@ class PropertyService private constructor() {
 
     fun find(position: GpsPosition): MutableList<Property> {
         return try {
-            properties.find(Mapper.toKey(position)) as MutableList
+            properties.find(Mapper.toBoundary(position)) as MutableList
         } catch (e: NoResultFoundException) {
             mutableListOf()
         }
     }
 
-    fun find(key: PlaceKey): MutableList<Property> {
+    fun find(positions: GpsPositions): MutableList<Property> {
         return try {
-            properties.find(key) as MutableList
+            properties.find(Mapper.toBoundary(positions)) as MutableList
         } catch (e: NoResultFoundException) {
             mutableListOf()
         }
@@ -70,8 +70,8 @@ class PropertyService private constructor() {
         val items = all()
         val gpsPositions = ArrayList<GpsPosition>(items.size * 2)
         items.forEach {
-            gpsPositions.add(it.key.topLeft)
-            gpsPositions.add(it.key.bottomRight)
+            gpsPositions.add(it.positions.topLeft)
+            gpsPositions.add(it.positions.bottomRight)
         }
         CsvUtils.writeDataToCSV("properties.csv", Property::class, items)
         CsvUtils.writeDataToCSV("properties-positions.csv", GpsPosition::class, gpsPositions)
@@ -84,13 +84,13 @@ class PropertyService private constructor() {
         items.forEach {
             val topLeft = gpsPositions.removeAt(gpsPositions.size - 1)
             val bottomRightX = gpsPositions.removeAt(gpsPositions.size - 1)
-            it.key = PlaceKey(topLeft, bottomRightX)
+            it.positions = GpsPositions(topLeft, bottomRightX)
             add(it)
         }
     }
 
     private fun associateParcels(property: Property) {
-        property.parcelsForProperty = ParcelService.getInstance().find(property.key)
+        property.parcelsForProperty = ParcelService.getInstance().find(property.positions)
         property.parcelsForProperty.forEach {
             it.propertiesForParcel.add(property)
         }

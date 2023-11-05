@@ -43,6 +43,11 @@ class CombinedController : Initializable, AbstractTableController<Place>() {
         throw NotImplementedError("Will not be used in this component")
     }
 
+    override fun loadAll() {
+        tableItems = FXCollections.observableArrayList(combinedService.all())
+        table.items = tableItems
+    }
+
     override fun initState() { }
 
     override fun deleteFromService(item: Place) {

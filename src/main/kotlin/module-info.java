@@ -19,6 +19,7 @@ module sk.zimen.semestralka {
     opens sk.zimen.semestralka.ui to javafx.fxml;
     opens sk.zimen.semestralka.ui.table_controllers to javafx.fxml;
     opens sk.zimen.semestralka.ui.add_edit_controllers to javafx.fxml;
+    opens sk.zimen.semestralka.ui.storage_controllers to javafx.fxml;
     opens sk.zimen.semestralka.api.types to javafx.base, kotlin.reflect;
     opens sk.zimen.semestralka.quadtree.interfaces to kotlin.reflect;
     opens sk.zimen.semestralka.quadtree.node to kotlin.reflect;

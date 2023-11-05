@@ -14,7 +14,7 @@ class Property() : Place() {
 
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : this() {
         this.number = number
-        this.key = Mapper.toKey(topLeft, bottomRight)
+        this.positions = Mapper.toKey(topLeft, bottomRight)
     }
 
     constructor(number: Int, description: String, topLeft: GpsPosition, bottomRight: GpsPosition) : this(

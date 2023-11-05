@@ -11,28 +11,33 @@ import sk.zimen.semestralka.utils.Mapper
  * @author David Zimen
  */
 @CsvObject
-open class Place() : QuadTreeData<PlaceKey>() {
+open class Place() : QuadTreeData {
 
     var number: Int = 0
     var description: String? = null
+    lateinit var positions: GpsPositions
 
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : this () {
         this.number = number
-        this.key = Mapper.toKey(topLeft, bottomRight)
+        this.positions = Mapper.toKey(topLeft, bottomRight)
     }
 
     constructor(number: Int, description: String?, topLeft: GpsPosition, bottomRight: GpsPosition) : this(number, topLeft, bottomRight) {
         this.description = description
     }
 
-    override fun toKey(boundary: Boundary): PlaceKey = Mapper.toKey(boundary)
+    override fun getBoundary(): Boundary = Mapper.toBoundary(positions)
+
+    override fun setBoundary(boundary: Boundary) {
+        positions = Mapper.toKey(boundary)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false
         }
         return if (other is Place) {
-            this.key == other.key && description == other.description && number == other.number
+            this.positions == other.positions && description == other.description && number == other.number
         } else false
     }
 

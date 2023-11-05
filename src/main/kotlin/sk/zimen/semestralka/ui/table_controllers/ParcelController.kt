@@ -34,6 +34,11 @@ class ParcelController : Initializable, AbstractTableController<Parcel>() {
         navigate("add-edit-parcel.fxml")
     }
 
+    override fun loadAll() {
+        tableItems = FXCollections.observableArrayList(parcelService.all())
+        table.items = tableItems
+    }
+
     override fun initState() {
         state = ParcelState.getInstance()
         super.initState()

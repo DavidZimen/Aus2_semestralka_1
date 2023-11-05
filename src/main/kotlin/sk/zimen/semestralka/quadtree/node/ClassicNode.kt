@@ -3,17 +3,16 @@ package sk.zimen.semestralka.quadtree.node
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 
 /**
  * Represents a classic node with data in meant for ClassicQuadTree.
  * @author David Zimen
  */
-class ClassicNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
+class ClassicNode<T : QuadTreeData> : Node<T> {
 
     constructor(level: Int, boundary: Boundary) : super(level, boundary)
 
-    constructor(level: Int, parent: ClassicNode<K, T>?, boundary: Boundary) : super(level, parent, boundary)
+    constructor(level: Int, parent: ClassicNode<T>?, boundary: Boundary) : super(level, parent, boundary)
 
     override val isEmpty: Boolean
         get() = dataList.isEmpty()
@@ -39,7 +38,7 @@ class ClassicNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
 
     override fun canBeDivided(maxDepth: Int): Boolean = !isEmpty && (size > 1 || !isLeaf) && level < maxDepth
 
-    override fun createNewNode(p: Position): Node<K, T> = ClassicNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
+    override fun createNewNode(p: Position): Node<T> = ClassicNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
 
     override fun divisibleItems(): List<T> {
         return if (size > 1) {
