@@ -184,29 +184,29 @@ class Generator() {
     }
 }
 
-//enum class GeneratedSize(val maxSize: Double) {
-//    XXS(0.000_01),
-//    XS(0.000_1),
-//    S(0.001),
-//    M(0.01),
-//    L(0.1),
-//    XL(0.2),
-//    XXL(1.0)
-//}
-
 /**
  * Enum values to represent max distance between 2 generated [GpsPosition]s.
  * @author David Zimen
  */
 enum class GeneratedSize(val maxSize: Double) {
-    XXS(0.001),
-    XS(0.01),
-    S(0.1),
-    M(0.2),
-    L(0.5),
-    XL(1.0),
-    XXL(2.0)
+    XXS(0.000_01),
+    XS(0.000_1),
+    S(0.001),
+    M(0.01),
+    L(0.1),
+    XL(0.2),
+    XXL(1.0)
 }
+
+//enum class GeneratedSize(val maxSize: Double) {
+//    XXS(0.001),
+//    XS(0.01),
+//    S(0.1),
+//    M(0.2),
+//    L(0.5),
+//    XL(1.0),
+//    XXL(2.0)
+//}
 
 enum class GeneratedOperation() {
     DELETE,

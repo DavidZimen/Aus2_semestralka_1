@@ -71,7 +71,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Creates new [ClassicNode] with boundary corresponding to provided [Position].
      * @param p Position where to create [Boundary].
      */
-    protected abstract fun createNewNode(p: Position): Node<K, T>
+    abstract fun createNewNode(p: Position): Node<K, T>
 
     /**
      * Used to remove data when there is only one item left in node.
