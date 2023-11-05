@@ -68,6 +68,8 @@ abstract class AbstractTableController<T : Place> : Initializable {
 
     abstract fun onAdd()
 
+    abstract fun loadAll()
+
     abstract fun deleteFromService(item: T)
 
     open fun initState() {
@@ -110,14 +112,14 @@ abstract class AbstractTableController<T : Place> : Initializable {
         table.selectionModel.selectionMode = SelectionMode.SINGLE
         desc.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.description) }
         number.cellValueFactory = PropertyValueFactory("number")
-        topWidthValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.topLeft.width.toString()) }
-        topWidthPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.topLeft.widthPosition.toString()) }
-        topHeightValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.topLeft.height.toString()) }
-        topHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.topLeft.heightPosition.toString()) }
-        bottomWidthValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.width.toString()) }
-        bottomWidthPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.widthPosition.toString()) }
-        bottomHeightValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.height.toString()) }
-        bottomHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.key.bottomRight.heightPosition.toString()) }
+        topWidthValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.topLeft.width.toString()) }
+        topWidthPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.topLeft.widthPosition.toString()) }
+        topHeightValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.topLeft.height.toString()) }
+        topHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.topLeft.heightPosition.toString()) }
+        bottomWidthValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.bottomRight.width.toString()) }
+        bottomWidthPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.bottomRight.widthPosition.toString()) }
+        bottomHeightValue.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.bottomRight.height.toString()) }
+        bottomHeightPos.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.positions.bottomRight.heightPosition.toString()) }
         deleteButton?.isVisible = false
         editButton?.isVisible = false
         width.allowOnlyDouble()

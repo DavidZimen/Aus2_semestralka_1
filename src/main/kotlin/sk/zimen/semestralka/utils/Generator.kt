@@ -5,8 +5,6 @@ import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.boundary.Boundary
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -34,21 +32,26 @@ class Generator() {
         count: Int,
         boundary: Boundary? = null
     ): MutableList<T> {
-        if (boundary != null) {
-            with(boundary) {
-                setCoordinates(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
-            }
-        }
-        val generatedItems = ArrayList<T>(count)
-        while(generatedItems.size < count) {
+        setCoordinates(boundary)
+        val items = ArrayList<T>(count)
+        while(items.size < count) {
             try {
                 val item = generateItem(itemClass)
-                item.number = random.nextInt()
-                item.description = nextString(random.nextInt(20))
-                generatedItems.add(item)
+                items.add(item)
             } catch (_: Exception) { }
         }
-        return generatedItems
+        return items
+    }
+
+    fun generateBoundaries(count: Int, boundary: Boundary? = null): MutableList<Boundary> {
+        setCoordinates(boundary)
+        val boundaries = ArrayList<Boundary>(count)
+        while(boundaries.size < count) {
+            try {
+                boundaries.add(nextBoundary(generateSize()))
+            } catch (_: Exception) { }
+        }
+        return boundaries
     }
 
     /**
@@ -86,8 +89,8 @@ class Generator() {
         return operations
     }
 
-    fun <K : QuadTreeKey, T : QuadTreeData<K>> generateTree(
-        tree: QuadTree<K, T>,
+    fun <T : Place> generateTree(
+        tree: QuadTree<T>,
         itemClass: KClass<T>,
         quadrantWidth: Double,
         quadrantHeight: Double,
@@ -108,9 +111,11 @@ class Generator() {
         return addedItems
     }
 
-    private fun <K : QuadTreeKey, T : QuadTreeData<K>> generateItem(clazz: KClass<T>): T {
+    private fun <T : Place> generateItem(clazz: KClass<T>): T {
         val instance = clazz.createInstance()
-        instance.key = instance.toKey(nextBoundary(generateSize()))
+        instance.positions = Mapper.toKey(nextBoundary(generateSize()))
+        instance.number = random.nextInt(0, Int.MAX_VALUE)
+        instance.description = nextString(random.nextInt(20))
         return instance
     }
 
@@ -174,6 +179,14 @@ class Generator() {
         return (1..length)
                 .map { charset[random.nextInt(charset.length)] }
                 .joinToString("")
+    }
+
+    private fun setCoordinates(boundary: Boundary?) {
+        if (boundary != null) {
+            with(boundary) {
+                setCoordinates(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+            }
+        }
     }
 
     private fun setCoordinates(leftX: Double, topY: Double, rightX: Double, bottomY: Double) {

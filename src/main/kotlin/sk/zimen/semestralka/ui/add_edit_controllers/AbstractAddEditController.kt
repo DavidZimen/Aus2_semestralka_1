@@ -66,7 +66,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
         editBefore?.also {
             number.text = it.number.toString()
             desc.text = it.description
-            with(it.key.topLeft) {
+            with(it.positions.topLeft) {
                 widthTop.text = width.toString()
                 zPos.isSelected = widthPosition == WidthPos.Z
                 vPos.isSelected = widthPosition == WidthPos.V
@@ -74,7 +74,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
                 sPos.isSelected = heightPosition == HeightPos.S
                 jPos.isSelected = heightPosition == HeightPos.J
             }
-            with(it.key.bottomRight) {
+            with(it.positions.bottomRight) {
                 widthBottom.text = width.toString()
                 zPosBottom.isSelected = widthPosition == WidthPos.Z
                 vPosBottom.isSelected = widthPosition == WidthPos.V

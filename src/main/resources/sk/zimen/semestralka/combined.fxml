@@ -155,6 +155,14 @@
                         <Insets right="10.0" />
                      </FlowPane.margin>
                   </Button>
+                   <Button mnemonicParsing="false" onAction="#loadAll" text="All">
+                       <font>
+                           <Font size="14.0" />
+                       </font>
+                       <HBox.margin>
+                           <Insets left="10.0" />
+                       </HBox.margin>
+                   </Button>
                </children>
             </FlowPane>
          </children>

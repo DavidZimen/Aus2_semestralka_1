@@ -4,14 +4,13 @@ import org.apache.commons.collections4.iterators.IteratorChain
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 
 /**
  * Represents an advanced node with data in AdvancedQuadTree.
  * Provides better performance for insert and delete operations
  * @author David Zimen
  */
-class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
+class AdvancedNode<T : QuadTreeData> : Node<T> {
     /**
      * Holds data, where it is not possible further insert into deeper nodes.
      */
@@ -19,7 +18,7 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
 
     constructor(level: Int, boundary: Boundary) : super(level, boundary)
 
-    constructor(level: Int, parent: Node<K, T>?, boundary: Boundary) : super(level, parent, boundary)
+    constructor(level: Int, parent: Node<T>?, boundary: Boundary) : super(level, parent, boundary)
 
     // Functions and functional attributes overrides
     override val isEmpty: Boolean
@@ -69,7 +68,7 @@ class AdvancedNode<K : QuadTreeKey, T : QuadTreeData<K>> : Node<K, T> {
         }
     }
 
-    override fun createNewNode(p: Position): Node<K, T> = AdvancedNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
+    override fun createNewNode(p: Position): Node<T> = AdvancedNode(level + 1, this, Boundary.createBoundaryOnPosition(p, boundary))
 
     override fun divisibleItems(): List<T> {
         return if (size > 1) {

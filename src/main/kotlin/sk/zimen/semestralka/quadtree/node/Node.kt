@@ -8,7 +8,6 @@ import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
 import sk.zimen.semestralka.quadtree.exceptions.PositionException
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.interfaces.QuadTreeKey
 import sk.zimen.semestralka.quadtree.metrics.NodeMetrics
 import java.util.*
 
@@ -16,15 +15,15 @@ import java.util.*
  * Represents a base abstract class for node with data in QuadTree.
  * @author David Zimen
  */
-abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
+abstract class Node<T : QuadTreeData> {
 
     val dataList: MutableList<T> = ArrayList()
     val level: Int
-    var parent: Node<K, T>? = null
-    var topLeft: Node<K, T>? = null
-    var bottomLeft: Node<K, T>? = null
-    var topRight: Node<K, T>? = null
-    var bottomRight: Node<K, T>? = null
+    var parent: Node<T>? = null
+    var topLeft: Node<T>? = null
+    var bottomLeft: Node<T>? = null
+    var topRight: Node<T>? = null
+    var bottomRight: Node<T>? = null
     var boundary: Boundary
 
     constructor(level: Int, boundary: Boundary) {
@@ -32,7 +31,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
         this.boundary = boundary
     }
 
-    constructor(level: Int, parent: Node<K, T>?, boundary: Boundary) {
+    constructor(level: Int, parent: Node<T>?, boundary: Boundary) {
         this.level = level
         this.boundary = boundary
         this.parent = parent
@@ -71,7 +70,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Creates new [ClassicNode] with boundary corresponding to provided [Position].
      * @param p Position where to create [Boundary].
      */
-    abstract fun createNewNode(p: Position): Node<K, T>
+    abstract fun createNewNode(p: Position): Node<T>
 
     /**
      * Used to remove data when there is only one item left in node.
@@ -110,7 +109,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @param item Generic data to be inserted.
      */
     fun insert(item: T, maxDepth: Int): Boolean {
-        val boundary: Boundary = item.key.toBoundary()
+        val boundary: Boundary = item.getBoundary()
 
         // if no data and not divided yet or node level is maximum
         if ((isEmpty && isLeaf) || level == maxDepth) {
@@ -119,11 +118,11 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
 
         // insert item on required position
         var position: Position = this.getPosition(boundary)
-        var node: Node<K, T> = getOrCreateNodeOnPosition(position)
+        var node: Node<T> = getOrCreateNodeOnPosition(position)
         val res = node.simpleInsert(item, node.getPosition(boundary))
 
         // check all data and rearrange
-        val nodeIterator: NodeIterator<K, T> = this.iterator()
+        val nodeIterator: NodeIterator<T> = this.iterator()
         if (this !== node) {
             nodeIterator.addToIteration(node)
         }
@@ -136,11 +135,11 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
                 // for each data try to put it in correct position
                 while (dataIterator.hasNext()) {
                     val listData: T = dataIterator.next()
-                    position = node.getPosition(listData.key.toBoundary())
+                    position = node.getPosition(listData.getBoundary())
 
                     //if position is not current -> insert on position
                     if (position !== Position.CURRENT) {
-                        val newPosNode: Node<K, T> = node.getOrCreateNodeOnPosition(position)
+                        val newPosNode: Node<T> = node.getOrCreateNodeOnPosition(position)
                         newPosNode.simpleInsert(listData, newPosNode.getPosition(listData))
                         dataIterator.remove()
 
@@ -158,17 +157,16 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
 
     /**
      * Method to find all items which intersects with given key.
-     * @param key Provided key.
+     * @param boundary Provided are to do interval searching.
      */
     @Throws(NoResultFoundException::class)
-    fun find(key: K): List<T> {
+    fun find(boundary: Boundary): List<T> {
         val foundData: MutableList<T> = mutableListOf()
-        val boundary: Boundary = key.toBoundary()
 
         // check child notes and their data
         for (node in this) {
             for (item in node.dataIterator()) {
-                if (item.key.toBoundary().intersects(boundary)) {
+                if (item.getBoundary().intersects(boundary)) {
                     foundData.add(item)
                 }
             }
@@ -212,7 +210,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
 
         // rearrange nodes if necessary
         val childCount: Int = childrenCount()
-        val onlyChild: Node<K, T>? = oneNotNullChild()
+        val onlyChild: Node<T>? = oneNotNullChild()
         if (isEmpty) {
             if (childCount == 0) {
                 removeNode()
@@ -237,14 +235,14 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Can't return a null value.
      * @param p Position where to find node.
      */
-    fun getNodeOnPosition(p: Position): Node<K, T> = getNodeOnPositionOrNull(p)!!
+    fun getNodeOnPosition(p: Position): Node<T> = getNodeOnPositionOrNull(p)!!
 
     /**
      * Return a node on provided position.
      * Can return a null value.
      * @param p Position where to find node.
      */
-    fun getNodeOnPositionOrNull(p: Position): Node<K, T>? {
+    fun getNodeOnPositionOrNull(p: Position): Node<T>? {
         return when (p) {
             Position.CURRENT -> this
             Position.TOP_LEFT -> topLeft
@@ -259,8 +257,8 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @param item Provided data
      * @return Reference to [ClassicNode]
      */
-    fun findMostEligibleNode(item: T): Node<K, T> {
-        val boundary: Boundary = item.key.toBoundary()
+    fun findMostEligibleNode(item: T): Node<T> {
+        val boundary: Boundary = item.getBoundary()
         return this.findMostEligibleNode(boundary)
     }
 
@@ -269,10 +267,10 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @param b Provided boundary.
      * @return Reference to [ClassicNode]
      */
-    fun findMostEligibleNode(b: Boundary): Node<K, T> {
+    fun findMostEligibleNode(b: Boundary): Node<T> {
         var position: Position = this.getPosition(b)
         var existsNode: Boolean = existsOnPosition(position)
-        var node: Node<K, T> = if (existsNode) getNodeOnPosition(position) else this
+        var node: Node<T> = if (existsNode) getNodeOnPosition(position) else this
 
         while (existsNode) {
             position = node.getPosition(b)
@@ -311,7 +309,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @return Position where the data belongs in the context of current [ClassicNode].
      */
     @Throws(IllegalArgumentException::class)
-    fun getPosition(data: T): Position = this.getPosition(data.key.toBoundary())
+    fun getPosition(data: T): Position = this.getPosition(data.getBoundary())
 
     /**
      * @param b Provided boundary.
@@ -347,7 +345,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * @throws PositionException When no position was provided.
      */
     @Throws(PositionException::class)
-    protected fun getOrCreateNodeOnPosition(p: Position?): Node<K, T> {
+    protected fun getOrCreateNodeOnPosition(p: Position?): Node<T> {
         return when (p) {
             Position.CURRENT -> this
             Position.TOP_LEFT -> topLeft ?: createNewNode(p).also { topLeft = it }
@@ -377,7 +375,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Returns child [Node], if there is only one node.
      * If there are more than 1 or 0, then returns null.
      */
-    protected fun oneNotNullChild(): Node<K, T>? {
+    protected fun oneNotNullChild(): Node<T>? {
         val count: Int = childrenCount()
         if (count == 0 || count > 1) return null
 
@@ -431,7 +429,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
                 }
             }
             for (item in node.dataIterator()) {
-                with(item.key.toBoundary()) {
+                with(item.getBoundary()) {
                     if (topLeft[0] < leftX) leftX = topLeft[0]
                     if (topLeft[1] > topY) topY = topLeft[1]
                     if (bottomRight[0] > rightX) rightX = bottomRight[0]
@@ -480,7 +478,7 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
     /**
      * @return [QuadTreeNodeIterator] instance for current [ClassicNode].
      */
-    operator fun iterator(): NodeIterator<K, T> {
+    operator fun iterator(): NodeIterator<T> {
         return QuadTreeNodeIterator()
     }
 
@@ -489,11 +487,11 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
      * Iterates in order TOP_LEFT -> BOTTOM_LEFT -> TOP_RIGHT -> BOTTOM_RIGHT.
      * @author David Zimen
      */
-    private inner class QuadTreeNodeIterator : NodeIterator<K, T> {
+    private inner class QuadTreeNodeIterator : NodeIterator<T> {
         /**
          * Stack of the nodes for traversal.
          */
-        private val stack: Stack<Node<K, T>> = Stack()
+        private val stack: Stack<Node<T>> = Stack()
 
         init {
             stack.push(this@Node)
@@ -503,11 +501,11 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
             return !stack.isEmpty()
         }
 
-        override operator fun next(): Node<K, T> {
+        override operator fun next(): Node<T> {
             if (!hasNext()) {
                 throw NoSuchElementException("No more items in NodeIterator.")
             }
-            val current: Node<K, T>? = stack.pop()
+            val current: Node<T>? = stack.pop()
 
             // Push all not null children into stack
             if (current!!.topLeft != null) {
@@ -525,14 +523,14 @@ abstract class Node<K : QuadTreeKey, T : QuadTreeData<K>> {
             return current
         }
 
-        override fun nextWithoutChildren(): Node<K, T> {
+        override fun nextWithoutChildren(): Node<T> {
             if (!hasNext()) {
                 throw NoSuchElementException("No more items in NodeIterator.")
             }
             return stack.pop()
         }
 
-        override fun addToIteration(quadtreeNode: Node<K, T>) {
+        override fun addToIteration(quadtreeNode: Node<T>) {
             stack.push(quadtreeNode)
         }
 

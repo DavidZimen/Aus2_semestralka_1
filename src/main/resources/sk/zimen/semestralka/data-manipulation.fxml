@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="980.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.storage_controllers.StorageTabsController">
+  <tabs>
+      <Tab text="Save to storage">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="button" layoutX="63.0" layoutY="32.0" mnemonicParsing="false" onAction="#onSave" text="Save" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <ProgressIndicator fx:id="spinner" layoutX="40.0" layoutY="110.0" prefHeight="24.0" prefWidth="24.0" AnchorPane.topAnchor="80.0" />
+                  <Label fx:id="spinnerLabel" layoutX="110.0" layoutY="114.0" text="Saving data, please wait" AnchorPane.leftAnchor="78.0" AnchorPane.topAnchor="83.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+    <Tab fx:id="loadTab" text="Load from storage">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+      </content>
+    </Tab>
+    <Tab fx:id="generatorTab" text="Data generator">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>
