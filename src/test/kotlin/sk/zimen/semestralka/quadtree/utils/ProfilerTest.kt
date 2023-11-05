@@ -14,7 +14,7 @@ internal class ProfilerTest {
     @Test
     fun profileTestOptimizationFunction() {
         val treeItemsCount = 10_000
-        val findCount = 500
+        val findCount = 2000
         val tree = AdvancedQuadTree<Place>(5)
         val generator = with(tree.root) {
             Generator().apply {
