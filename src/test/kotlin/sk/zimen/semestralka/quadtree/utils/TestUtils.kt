@@ -116,3 +116,38 @@ fun <T : QuadTreeData> insertDataToTree(tree: QuadTree<T>, items: List<T>): Long
     watch.stop()
     return watch.time
 }
+
+/**
+ * Prepares [Generator] for provided [QuadTree] based on its [Boundary].
+ * When [badHealth] is set to true, it shifts generator boundaries so the tree
+ * will have poor [QuadTree.health] statistic.
+ */
+fun <T : QuadTreeData> prepareGenerator(tree: QuadTree<T>, badHealth: Boolean = false): Generator {
+    val generator = Generator()
+    var leftXShift = 0
+    var rightXShift = 0
+    var topYShift = 0
+    var bottomYShift = 0
+
+    if (badHealth) {
+        leftXShift = generator.random.nextInt(0, 20)
+        rightXShift = generator.random.nextInt(0, 20)
+        topYShift = generator.random.nextInt(0, 20)
+        bottomYShift = generator.random.nextInt(0, 20)
+    }
+
+    with(tree.root) {
+        generator.apply {
+            with(createNewNode(Position.TOP_LEFT).boundary) {
+                leftX = topLeft[0] + leftXShift
+                topY = topLeft[1] - topYShift
+            }
+            with(createNewNode(Position.TOP_RIGHT).boundary) {
+                rightX = bottomRight[0] - rightXShift
+                bottomY = bottomRight[1] + bottomYShift
+            }
+        }
+    }
+
+    return generator
+}
