@@ -3,6 +3,7 @@ package sk.zimen.semestralka.ui.storage_controllers
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.TextField
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import sk.zimen.semestralka.ui.util.allowOnlyInt
@@ -17,6 +18,7 @@ class GeneratorController : AbstractStorageController() {
     @FXML
     private lateinit var itemsCount: TextField
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun onGenerate() {
         val width = quadWidth.text.toDouble()
         val height = quadHeight.text.toDouble()

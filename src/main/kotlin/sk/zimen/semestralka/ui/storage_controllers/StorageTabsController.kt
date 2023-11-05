@@ -3,6 +3,7 @@ package sk.zimen.semestralka.ui.storage_controllers
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Tab
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import sk.zimen.semestralka.ui.util.disable
@@ -21,6 +22,7 @@ class StorageTabsController : AbstractStorageController() {
     @FXML
     private lateinit var loadTab: Tab
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun onSave() {
         disableAll(true)
         GlobalScope.launch {

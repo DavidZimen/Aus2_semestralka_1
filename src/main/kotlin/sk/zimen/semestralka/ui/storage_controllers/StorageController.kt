@@ -1,6 +1,7 @@
 package sk.zimen.semestralka.ui.storage_controllers
 
 import javafx.application.Platform
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -8,6 +9,7 @@ class StorageController : AbstractStorageController() {
 
     override val operationType: String = "loading"
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun onLoad() {
         val width = quadWidth.text.toDouble()
         val height = quadHeight.text.toDouble()
