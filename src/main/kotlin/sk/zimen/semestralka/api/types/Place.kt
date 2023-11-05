@@ -2,6 +2,7 @@ package sk.zimen.semestralka.api.types
 
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
+import sk.zimen.semestralka.utils.CsvExclude
 import sk.zimen.semestralka.utils.CsvObject
 import sk.zimen.semestralka.utils.Mapper
 
@@ -15,6 +16,7 @@ open class Place() : QuadTreeData {
 
     var number: Int = 0
     var description: String? = null
+    @CsvExclude
     lateinit var positions: GpsPositions
 
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : this () {

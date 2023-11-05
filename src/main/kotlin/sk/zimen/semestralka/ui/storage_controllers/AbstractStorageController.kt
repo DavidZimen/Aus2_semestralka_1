@@ -57,7 +57,7 @@ abstract class AbstractStorageController : Initializable {
         alert.showAndWait()
     }
 
-    protected fun disableAll(disable: Boolean = true) {
+    protected open fun disableAll(disable: Boolean = true) {
         spinner.showSpinner(disable, spinnerLabel)
         button.disable(disable)
         disableForm(disable)
