@@ -19,12 +19,12 @@ abstract class Node<T : QuadTreeData> {
 
     val dataList: MutableList<T> = ArrayList()
     val level: Int
-    var parent: Node<T>? = null
+    var boundary: Boundary
     var topLeft: Node<T>? = null
     var bottomLeft: Node<T>? = null
     var topRight: Node<T>? = null
     var bottomRight: Node<T>? = null
-    var boundary: Boundary
+    private var parent: Node<T>? = null
 
     constructor(level: Int, boundary: Boundary) {
         this.level = level
@@ -186,7 +186,7 @@ abstract class Node<T : QuadTreeData> {
      * @throws MultipleResultsFoundException When there are more exactly same items.
      */
     @Throws(NoResultFoundException::class, MultipleResultsFoundException::class)
-    fun delete(item: T, maxDepth: Int) {
+    fun delete(item: T) {
         var data: T
         val removedData: MutableList<T> = ArrayList(1)
         val dataIterator: MutableIterator<T> = dataIterator()
@@ -211,23 +211,23 @@ abstract class Node<T : QuadTreeData> {
         // rearrange nodes if necessary
         val childCount: Int = childrenCount()
         val onlyChild: Node<T>? = oneNotNullChild()
-        if (isEmpty) {
-            if (childCount == 0) {
-                removeNode()
-            } else if (childCount == 1 && onlyChild != null) {
-                if (onlyChild.childrenCount() == 0) {
-                    if (onlyChild.isEmpty) {
-                        onlyChild.removeNode()
-                        removeNode()
-                    } else if (onlyChild.size == 1) {
-                        val reinsertItem: T = onlyChild.removeSingleItem()
-                        insert(reinsertItem, maxDepth)
-                        onlyChild.removeNode()
-                    }
+        if (!isEmpty || isRoot || onlyChild == null) return
+        if (childCount == 0 || childCount == 1 ) {
+            var upstreamMergeNode = parent!!
+
+            if (childCount == 0 || onlyChild.childrenCount() == 0) {
+                if (onlyChild.isEmpty) {
+                    onlyChild.removeNode()
+                    removeNode()
+                } else if (onlyChild.size == 1) {
+                    val reinsertItem: T = onlyChild.removeSingleItem()
+                    onlyChild.removeNode()
+                    simpleInsert(reinsertItem, getPosition(reinsertItem))
+                    upstreamMergeNode = this
                 }
+                upstreamMergeNode.mergeUpstream()
             }
         }
-        //TODO also add something to collapse nodes to root
     }
 
     /**
@@ -284,15 +284,12 @@ abstract class Node<T : QuadTreeData> {
      * Removes node from the tree.
      */
     fun removeNode() {
-        parent?.let {
-            if (topLeft === this) {
-                topLeft = null
-            } else if (bottomLeft === this) {
-                bottomLeft = null
-            } else if (topRight === this) {
-                topRight = null
-            } else if (bottomRight === this) {
-                bottomRight = null
+        parent?.let { parentNode ->
+            when (this) {
+                parentNode.topLeft -> parentNode.topLeft = null
+                parentNode.bottomLeft -> parentNode.bottomLeft = null
+                parentNode.topRight -> parentNode.topRight = null
+                parentNode.bottomRight -> parentNode.bottomRight = null
             }
         }
 
@@ -316,7 +313,7 @@ abstract class Node<T : QuadTreeData> {
      * @throws IllegalArgumentException When no boundary was provided.
      * @return Position where the boundary belongs in the context of current [ClassicNode].
      */
-    protected fun getPosition(b: Boundary): Position {
+    private fun getPosition(b: Boundary): Position {
         // initialize all boundaries
         val topLeftBoundary: Boundary = topLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.TOP_LEFT, boundary)
         val bottomLeftBoundary: Boundary = bottomLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.BOTTOM_LEFT, boundary)
@@ -361,7 +358,7 @@ abstract class Node<T : QuadTreeData> {
      * When position is CURRENT, then return false to not enter into while loop.
      * Use only in findMostEligibleNode method !!!
      */
-    protected fun existsOnPosition(p: Position): Boolean {
+    private fun existsOnPosition(p: Position): Boolean {
         return when (p) {
             Position.TOP_LEFT -> topLeft != null
             Position.BOTTOM_LEFT -> bottomLeft != null
@@ -375,7 +372,7 @@ abstract class Node<T : QuadTreeData> {
      * Returns child [Node], if there is only one node.
      * If there are more than 1 or 0, then returns null.
      */
-    protected fun oneNotNullChild(): Node<T>? {
+    private fun oneNotNullChild(): Node<T>? {
         val count: Int = childrenCount()
         if (count == 0 || count > 1) return null
 
@@ -393,9 +390,32 @@ abstract class Node<T : QuadTreeData> {
     }
 
     /**
+     * Function to merge nodes as close to quadtree root as possible.
+     */
+    private fun mergeUpstream() {
+        var node = this
+        while (node.canBeMerged()) {
+            println("Merging upstream")
+            val reinsertItem = node.removeSingleItem()
+            val parent = node.parent!!
+            node.removeNode()
+            node = parent
+            node.simpleInsert(reinsertItem, node.getPosition(reinsertItem))
+        }
+    }
+
+    /**
+     * @return True if current node can be merged with parent.
+     */
+    private fun canBeMerged(): Boolean {
+        return !isRoot && childrenCount() == 0 && size == 1
+                && parent?.childrenCount() == 1 && parent?.size == 0
+    }
+
+    /**
      * @return Number of not-null children for [Node].
      */
-    protected fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
+    private fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
 
     //FUNCTIONS FOR METRICS
 

@@ -129,7 +129,7 @@ abstract class QuadTree<T : QuadTreeData> (
      * @param item Data to be removed.
      */
     fun delete(item: T) {
-        root.findMostEligibleNode(item).delete(item, maxAllowedDepth)
+        root.findMostEligibleNode(item).delete(item)
         size--
     }
 
@@ -144,7 +144,7 @@ abstract class QuadTree<T : QuadTreeData> (
         if (old.getBoundary() == new.getBoundary()) {
             node.edit(old, new)
         } else {
-            node.delete(old, maxAllowedDepth)
+            node.delete(old)
             root.findMostEligibleNode(new).insert(new, maxAllowedDepth)
         }
 
