@@ -77,4 +77,12 @@ class AdvancedNode<T : QuadTreeData> : Node<T> {
             emptyList()
         }
     }
+
+    override fun findDataIterator(): Iterator<T> {
+        return if (!isLeaf) {
+            nonDivisibleData.listIterator()
+        } else {
+            dataIterator()
+        }
+    }
 }

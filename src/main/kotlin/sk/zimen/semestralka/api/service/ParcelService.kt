@@ -1,8 +1,6 @@
 package sk.zimen.semestralka.api.service
 
-import sk.zimen.semestralka.api.types.GpsPosition
-import sk.zimen.semestralka.api.types.GpsPositions
-import sk.zimen.semestralka.api.types.Parcel
+import sk.zimen.semestralka.api.types.*
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
@@ -18,6 +16,25 @@ class ParcelService private constructor(){
     private val parcels: QuadTree<Parcel> = AdvancedQuadTree(10)
 
     private val combinedService = CombinedService.getInstance()
+
+    init {
+        add(
+            Parcel(
+                100,
+                "Some random desc 1",
+                GpsPosition(20.0, WidthPos.Z, 20.0, HeightPos.S),
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S)
+            )
+        )
+        add(
+            Parcel(
+                200,
+                "Another desc for parcel",
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S),
+                GpsPosition(14.0, WidthPos.Z, 14.0, HeightPos.S)
+            )
+        )
+    }
 
     fun add(parcel: Parcel) {
         associateProperties(parcel)

@@ -296,21 +296,20 @@ abstract class QuadTree<T : QuadTreeData> (
         var dataIterator: MutableIterator<T>
         var node: Node<T>
 
-        with(root.boundary) {
-            root = createRoot(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
+        val newRoot = with(root.boundary) {
             maxAllowedDepth = newMaxDepth
-            size = 0
+            createRoot(topLeft[0], topLeft[1], bottomRight[0], bottomRight[1])
         }
 
         while (iterator.hasNext()) {
             node = iterator.next()
             dataIterator = node.dataIterator()
             while (dataIterator.hasNext()) {
-                insert(dataIterator.next())
-                dataIterator.remove()
+                newRoot.insert(dataIterator.next(), maxAllowedDepth)
             }
             node.removeNode()
         }
+        root = newRoot
     }
 
     /**

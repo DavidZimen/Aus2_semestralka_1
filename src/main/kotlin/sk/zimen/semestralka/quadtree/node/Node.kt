@@ -159,24 +159,18 @@ abstract class Node<T : QuadTreeData> {
      * Method to find all items which intersects with given key.
      * @param boundary Provided are to do interval searching.
      */
-    @Throws(NoResultFoundException::class)
-    fun find(boundary: Boundary): List<T> {
+    open fun find(boundary: Boundary): List<T> {
         val foundData: MutableList<T> = mutableListOf()
 
         // check child notes and their data
-        for (node in this) {
-            for (item in node.dataIterator()) {
+        for (node in findIterator(boundary)) {
+            for (item in node.findDataIterator()) {
                 if (item.getBoundary().intersects(boundary)) {
                     foundData.add(item)
                 }
             }
         }
-
-        if (foundData.isNotEmpty()) {
-            return foundData
-        } else {
-            throw NoResultFoundException()
-        }
+        return foundData
     }
 
     /**
@@ -319,25 +313,28 @@ abstract class Node<T : QuadTreeData> {
      * @return Position where the boundary belongs in the context of current [ClassicNode].
      */
     private fun getPosition(b: Boundary): Position {
-        // initialize all boundaries
-        val topLeftBoundary: Boundary = topLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.TOP_LEFT, boundary)
-        val bottomLeftBoundary: Boundary = bottomLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.BOTTOM_LEFT, boundary)
-        val topRightBoundary: Boundary = topRight?.boundary ?: Boundary.createBoundaryOnPosition(Position.TOP_RIGHT, boundary)
-        val bottomRightBoundary: Boundary = bottomRight?.boundary ?: Boundary.createBoundaryOnPosition(Position.BOTTOM_RIGHT, boundary)
-
-        // check where boundary fits
-        return if (topLeftBoundary.contains(b)) {
+        return if (getBoundaryOnPosition(Position.TOP_LEFT).contains(b)) {
             Position.TOP_LEFT
-        } else if (bottomLeftBoundary.contains(b)) {
+        } else if (getBoundaryOnPosition(Position.BOTTOM_LEFT).contains(b)) {
             Position.BOTTOM_LEFT
-        } else if (topRightBoundary.contains(b)) {
+        } else if (getBoundaryOnPosition(Position.TOP_RIGHT).contains(b)) {
             Position.TOP_RIGHT
-        } else if (bottomRightBoundary.contains(b)) {
+        } else if (getBoundaryOnPosition(Position.BOTTOM_RIGHT).contains(b)) {
             Position.BOTTOM_RIGHT
         } else if (boundary.contains(b)) {
             Position.CURRENT
         } else {
             throw BoundaryException("Boundary can't fit into node.")
+        }
+    }
+
+    private fun getBoundaryOnPosition(p: Position): Boundary {
+        return when(p) {
+            Position.TOP_LEFT -> topLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.TOP_LEFT, boundary)
+            Position.BOTTOM_LEFT -> bottomLeft?.boundary ?: Boundary.createBoundaryOnPosition(Position.BOTTOM_LEFT, boundary)
+            Position.TOP_RIGHT -> topRight?.boundary ?: Boundary.createBoundaryOnPosition(Position.TOP_RIGHT, boundary)
+            Position.BOTTOM_RIGHT -> bottomRight?.boundary ?: Boundary.createBoundaryOnPosition(Position.BOTTOM_RIGHT, boundary)
+            Position.CURRENT -> boundary
         }
     }
 
@@ -482,11 +479,12 @@ abstract class Node<T : QuadTreeData> {
     private fun getPotentialDepth(item: T): Int {
         var depth = level
         val position = getPosition(item)
+        val maxDepth = 200
 
         if (position == Position.CURRENT) return depth
 
         var node = createNewNode(position)
-        while (node.getPosition(item) != Position.CURRENT) {
+        while (depth < maxDepth && node.getPosition(item) != Position.CURRENT) {
             node = node.createNewNode(node.getPosition(item))
             depth = node.level
         }
@@ -495,11 +493,23 @@ abstract class Node<T : QuadTreeData> {
 
     // ITERATOR CLASS AND FUNCTIONS
     /**
-     * @return [QuadTreeNodeIterator] instance for current [ClassicNode].
+     * @return [QuadTreeNodeIterator] instance for current [Node].
      */
-    operator fun iterator(): NodeIterator<T> {
+    fun iterator(): NodeIterator<T> {
         return QuadTreeNodeIterator()
     }
+
+    /**
+     * @return [FindIterator] instance for current [Node].
+     */
+    fun findIterator(b: Boundary): Iterator<Node<T>> {
+        return FindIterator(b)
+    }
+
+    /**
+     * Operator to traverse data for finding operation.
+     */
+    open fun findDataIterator(): Iterator<T> = dataIterator()
 
     /**
      * Iterator implementation for [ClassicNode].
@@ -516,18 +526,17 @@ abstract class Node<T : QuadTreeData> {
             stack.push(this@Node)
         }
 
-        override operator fun hasNext(): Boolean {
-            return !stack.isEmpty()
-        }
+        override operator fun hasNext(): Boolean = !stack.isEmpty()
+
 
         override operator fun next(): Node<T> {
             if (!hasNext()) {
                 throw NoSuchElementException("No more items in NodeIterator.")
             }
-            val current: Node<T>? = stack.pop()
+            val current: Node<T> = stack.pop()
 
             // Push all not null children into stack
-            if (current!!.topLeft != null) {
+            if (current.topLeft != null) {
                 addToIteration(current.topLeft!!)
             }
             if (current.bottomLeft != null) {
@@ -558,5 +567,48 @@ abstract class Node<T : QuadTreeData> {
          */
         @Deprecated("DON'T USE THIS METHOD")
         override fun remove() { }
+    }
+
+    /**
+     * Special iterator for find operation, when only those children,
+     * that intersects with initial provided [boundary] will be added for traversing.
+     */
+    private inner class FindIterator(b: Boundary) : Iterator<Node<T>> {
+
+        private val stack = Stack<Node<T>>()
+        private val boundary: Boundary
+
+        init {
+            stack.push(this@Node)
+            boundary = b
+        }
+
+        override fun hasNext(): Boolean = !stack.isEmpty()
+
+        override fun next(): Node<T> {
+            if (!hasNext()) {
+                throw NoSuchElementException("No more items in NodeIterator.")
+            }
+            val current: Node<T> = stack.pop()
+
+            // Push children that intersects with required boundary to stack
+            if (current.topLeft?.boundary?.intersects(boundary) == true) {
+                addToIteration(current.topLeft!!)
+            }
+            if (current.bottomLeft?.boundary?.intersects(boundary) == true) {
+                addToIteration(current.bottomLeft!!)
+            }
+            if (current.topRight?.boundary?.intersects(boundary) == true) {
+                addToIteration(current.topRight!!)
+            }
+            if (current.bottomRight?.boundary?.intersects(boundary) == true) {
+                addToIteration(current.bottomRight!!)
+            }
+            return current
+        }
+
+        fun addToIteration(quadtreeNode: Node<T>) {
+            stack.push(quadtreeNode)
+        }
     }
 }
