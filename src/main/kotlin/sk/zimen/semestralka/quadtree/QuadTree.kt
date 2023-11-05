@@ -175,7 +175,7 @@ abstract class QuadTree<T : QuadTreeData> (
      * Optimizes QuadTree based on currently calculated metrics.
      */
     fun optimise() {
-        val metrics = calculateMetrics()
+        val metrics = metrics()
         updateHealth(metrics)
         //if (health >= 0.85 * 100) return
 
@@ -213,20 +213,20 @@ abstract class QuadTree<T : QuadTreeData> (
         }
         changeParameters(maxDepth, topLeftX, topLeftY, bottomRightX, bottomRightY)
         if (currentDepth < maxAllowedDepth) maxAllowedDepth = currentDepth
-        updateHealth(calculateMetrics())
+        updateHealth(metrics())
     }
 
     /**
      * Function, that constructs [QuadTreeMetrics] from
-     * its children [NodeMetrics].
+     * its children [SubTreeMetrics].
      */
-    fun calculateMetrics(): QuadTreeMetrics {
+    fun metrics(): QuadTreeMetrics {
         val keys = Position.entries
             .filter { it != Position.CURRENT }
 
         val metricsMap = runBlocking {
             keys.associateWith {
-                async { root.getNodeOnPositionOrNull(it)?.metrics() ?: NodeMetrics()}
+                async { root.getNodeOnPositionOrNull(it)?.metrics() ?: SubTreeMetrics()}
             }.mapValues { (_, result) ->
                 result.await()
             }
@@ -272,7 +272,7 @@ abstract class QuadTree<T : QuadTreeData> (
     /**
      * Calculates new value for QuadTree health based on
      * weight given to attributes of [metrics].
-     * Result is value in interval <-1, 1>
+     * Result is value in interval <0, 1>
      */
     open fun updateHealth(metrics: QuadTreeMetrics) {
         with(metrics) {

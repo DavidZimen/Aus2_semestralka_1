@@ -58,16 +58,12 @@ object Mapper {
         return toBoundary(position, position)
     }
 
-    fun toKey(position: GpsPosition): GpsPositions {
-        return GpsPositions(position, position)
-    }
-
-    fun toKey(topLeft: GpsPosition, bottomRight: GpsPosition): GpsPositions {
+    fun toPositions(topLeft: GpsPosition, bottomRight: GpsPosition): GpsPositions {
         return GpsPositions(topLeft, bottomRight)
     }
 
-    fun toKey(boundary: Boundary): GpsPositions {
+    fun toPositions(boundary: Boundary): GpsPositions {
         val gpsPos = toGpsPositions(boundary)
-        return toKey(gpsPos[0], gpsPos[1])
+        return toPositions(gpsPos[0], gpsPos[1])
     }
 }

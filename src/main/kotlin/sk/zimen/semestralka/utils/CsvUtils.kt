@@ -9,10 +9,6 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.*
 
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-annotation class CsvObject
-
 /**
  * Annotation class, to annotate properties in classes,
  * which should not be written into CSV file.

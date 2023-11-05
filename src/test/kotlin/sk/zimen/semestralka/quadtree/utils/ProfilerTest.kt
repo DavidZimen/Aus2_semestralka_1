@@ -13,7 +13,7 @@ internal class ProfilerTest {
         val numberOfOperations = 10_000
         var advancedTree = AdvancedQuadTree<Place>(10)
         var classicTree = ClassicQuadTree<Place>(10)
-        var generator = prepareGenerator(advancedTree, badHealth)
+        val generator = prepareGenerator(advancedTree, badHealth)
         val random = generator.random
 
         // initialize tree
@@ -24,10 +24,10 @@ internal class ProfilerTest {
         insertDataToTree(advancedTree, items)
 
         // get healths
-        var metrics = advancedTree.calculateMetrics()
+        var metrics = advancedTree.metrics()
         advancedTree.updateHealth(metrics)
         println("AdvancedTree health: ${advancedTree.health}")
-        metrics = classicTree.calculateMetrics()
+        metrics = classicTree.metrics()
         classicTree.updateHealth(metrics)
         println("Classic health: ${advancedTree.health}")
 

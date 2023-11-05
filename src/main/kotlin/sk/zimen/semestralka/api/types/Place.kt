@@ -3,7 +3,6 @@ package sk.zimen.semestralka.api.types
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.utils.CsvExclude
-import sk.zimen.semestralka.utils.CsvObject
 import sk.zimen.semestralka.utils.Mapper
 
 /**
@@ -11,7 +10,6 @@ import sk.zimen.semestralka.utils.Mapper
  * Implements [QuadTreeData] interface, so it can be inserted into QuadTree.
  * @author David Zimen
  */
-@CsvObject
 open class Place() : QuadTreeData {
 
     var number: Int = 0
@@ -21,7 +19,7 @@ open class Place() : QuadTreeData {
 
     constructor(number: Int, topLeft: GpsPosition, bottomRight: GpsPosition) : this () {
         this.number = number
-        this.positions = Mapper.toKey(topLeft, bottomRight)
+        this.positions = Mapper.toPositions(topLeft, bottomRight)
     }
 
     constructor(number: Int, description: String?, topLeft: GpsPosition, bottomRight: GpsPosition) : this(number, topLeft, bottomRight) {
@@ -31,7 +29,7 @@ open class Place() : QuadTreeData {
     override fun getBoundary(): Boundary = Mapper.toBoundary(positions)
 
     override fun setBoundary(boundary: Boundary) {
-        positions = Mapper.toKey(boundary)
+        positions = Mapper.toPositions(boundary)
     }
 
     override fun equals(other: Any?): Boolean {

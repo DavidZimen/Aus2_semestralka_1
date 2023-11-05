@@ -3,7 +3,6 @@ package sk.zimen.semestralka.utils
 import org.apache.commons.math3.random.RandomDataGenerator
 import sk.zimen.semestralka.api.types.GpsPosition
 import sk.zimen.semestralka.api.types.Place
-import sk.zimen.semestralka.quadtree.QuadTree
 import sk.zimen.semestralka.quadtree.boundary.Boundary
 import java.util.*
 import kotlin.reflect.KClass
@@ -23,10 +22,6 @@ class Generator() {
         setCoordinates(-quadrantWidth, quadrantHeight, quadrantWidth, -quadrantHeight)
     }
 
-    constructor(leftX: Double, topY: Double, rightX: Double, bottomY: Double) : this() {
-        setCoordinates(leftX, topY, rightX, bottomY)
-    }
-
     fun <T : Place> generateItems(
         itemClass: KClass<T>,
         count: Int,
@@ -38,7 +33,7 @@ class Generator() {
             try {
                 val item = generateItem(itemClass)
                 items.add(item)
-            } catch (_: Exception) { }
+            } catch (_: Exception) {}
         }
         return items
     }
@@ -89,38 +84,12 @@ class Generator() {
         return operations
     }
 
-    fun <T : Place> generateTree(
-        tree: QuadTree<T>,
-        itemClass: KClass<T>,
-        quadrantWidth: Double,
-        quadrantHeight: Double,
-        maxDepth: Int,
-        itemCount: Int
-    ): MutableList<T> {
-        tree.changeParameters(maxDepth, -quadrantWidth, quadrantHeight, quadrantWidth, -quadrantHeight)
-        this.leftX = quadrantWidth
-        this.topY = quadrantHeight
-        val addedItems = ArrayList<T>(itemCount)
-        while (tree.size < itemCount) {
-            try {
-                val item = generateItem(itemClass)
-                addedItems.add(item)
-                tree.insert(item)
-            } catch (_: Exception) { }
-        }
-        return addedItems
-    }
-
     private fun <T : Place> generateItem(clazz: KClass<T>): T {
         val instance = clazz.createInstance()
-        instance.positions = Mapper.toKey(nextBoundary(generateSize()))
+        instance.positions = Mapper.toPositions(nextBoundary(generateSize()))
         instance.number = random.nextInt(0, Int.MAX_VALUE)
         instance.description = nextString(random.nextInt(20))
         return instance
-    }
-
-    fun nextPositions(size: GeneratedSize): Array<GpsPosition> {
-        return Mapper.toGpsPositions(nextBoundary(size))
     }
 
     fun generateSize(): GeneratedSize {

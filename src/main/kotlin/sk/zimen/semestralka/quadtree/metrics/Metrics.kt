@@ -42,7 +42,7 @@ class QuadTreeMetrics {
     }
 }
 
-class NodeMetrics() {
+class SubTreeMetrics() {
     var dataCount = 0
     var divisibleDataSize = 0
     var nodesCount = 0

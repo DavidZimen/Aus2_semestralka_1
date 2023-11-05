@@ -8,7 +8,7 @@ import sk.zimen.semestralka.quadtree.exceptions.NoResultFoundException
 import sk.zimen.semestralka.quadtree.exceptions.PositionException
 import sk.zimen.semestralka.quadtree.interfaces.NodeIterator
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
-import sk.zimen.semestralka.quadtree.metrics.NodeMetrics
+import sk.zimen.semestralka.quadtree.metrics.SubTreeMetrics
 import java.util.*
 
 /**
@@ -126,6 +126,7 @@ abstract class Node<T : QuadTreeData> {
         if (this !== node) {
             nodeIterator.addToIteration(node)
         }
+
         // loop through children nodes
         while (nodeIterator.hasNext()) {
             node = nodeIterator.nextWithoutChildren()
@@ -416,9 +417,9 @@ abstract class Node<T : QuadTreeData> {
     //FUNCTIONS FOR METRICS
 
     /**
-     * Calculates [NodeMetrics] for current node.
+     * Calculates [SubTreeMetrics] for current node.
      */
-    fun metrics(): NodeMetrics {
+    fun metrics(): SubTreeMetrics {
         var depth = 0
         var nodesCount = 0
         var dataCount = 0
@@ -454,7 +455,7 @@ abstract class Node<T : QuadTreeData> {
             }
         }
 
-        return NodeMetrics(dataCount, divisibleItemCount, nodesCount, depth, leftX, rightX, topY, bottomY, potentialDepth)
+        return SubTreeMetrics(dataCount, divisibleItemCount, nodesCount, depth, leftX, rightX, topY, bottomY, potentialDepth)
     }
 
     /**
