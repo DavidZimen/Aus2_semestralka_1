@@ -2,7 +2,11 @@ package sk.zimen.semestralka.quadtree
 
 import org.apache.commons.lang3.time.StopWatch
 import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import sk.zimen.semestralka.api.types.GpsPosition
+import sk.zimen.semestralka.api.types.HeightPos
 import sk.zimen.semestralka.api.types.Place
+import sk.zimen.semestralka.api.types.WidthPos
 import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.utils.insertDataToTree
 import sk.zimen.semestralka.quadtree.utils.testDelete
@@ -18,11 +22,11 @@ internal class QuadTreeTest {
     private var classicTree: ClassicQuadTree<Place> = ClassicQuadTree(10)
     private var advancedTree: AdvancedQuadTree<Place> = AdvancedQuadTree(10)
     private var itemsToRemove: Stack<Place> = Stack<Place>()
+    private val generator = Generator()
 
     @BeforeEach
     fun setUp() {
         val count = 10_000
-        val generator = Generator()
         val items: List<Place> = generator.generateItems(Place::class, count, classicTree.root.boundary)
         items.forEachIndexed { index, place -> if (index % 20 == 0) itemsToRemove.add(place) }
 
@@ -74,6 +78,28 @@ internal class QuadTreeTest {
         advanced.stop()
         println("Average delete time of CLASSIC: " + classic.time.toDouble() / numberOfDeletes)
         println("Average delete time of ADVANCED: " + advanced.time.toDouble() / numberOfDeletes)
+
+        // check if upstream merge is correct
+        val items = listOf(
+            Place(
+                1,
+                "Some random desc",
+                GpsPosition(20.0, WidthPos.Z, 20.0, HeightPos.S),
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S)
+            ),
+            Place(
+                2,
+                "Another desc",
+                GpsPosition(15.0, WidthPos.Z, 15.0, HeightPos.S),
+                GpsPosition(14.0, WidthPos.Z, 14.0, HeightPos.S)
+            )
+        )
+        advancedTree = AdvancedQuadTree(10)
+        advancedTree.insert(items[0])
+        advancedTree.insert(items[1])
+        advancedTree.delete(items[0])
+        assertEquals(1, advancedTree.root.size)
+        assertEquals(0, advancedTree.root.childrenCount())
     }
 
     @Order(4)

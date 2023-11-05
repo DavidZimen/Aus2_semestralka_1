@@ -301,6 +301,11 @@ abstract class Node<T : QuadTreeData> {
     }
 
     /**
+     * @return Number of not-null children for [Node].
+     */
+    fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
+
+    /**
      * @param data Provided data.
      * @throws IllegalArgumentException When no data was provided.
      * @return Position where the data belongs in the context of current [ClassicNode].
@@ -395,7 +400,6 @@ abstract class Node<T : QuadTreeData> {
     private fun mergeUpstream() {
         var node = this
         while (node.canBeMerged()) {
-            println("Merging upstream")
             val reinsertItem = node.removeSingleItem()
             val parent = node.parent!!
             node.removeNode()
@@ -411,11 +415,6 @@ abstract class Node<T : QuadTreeData> {
         return !isRoot && childrenCount() == 0 && size == 1
                 && parent?.childrenCount() == 1 && parent?.size == 0
     }
-
-    /**
-     * @return Number of not-null children for [Node].
-     */
-    private fun childrenCount(): Int = listOf(topLeft, bottomLeft, topRight, bottomRight).count { it != null }
 
     //FUNCTIONS FOR METRICS
 
