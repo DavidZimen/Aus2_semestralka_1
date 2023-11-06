@@ -1,9 +1,12 @@
 package sk.zimen.semestralka.ui.add_edit_controllers
 
+import javafx.beans.property.SimpleStringProperty
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import sk.zimen.semestralka.Aus2Semestralka
@@ -20,6 +23,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
     protected lateinit var state: AbstractState<T>
     protected var editBefore: T? = null
     protected lateinit var type: String
+    protected var associatedProperties = FXCollections.observableArrayList<Place>()!!
     @FXML
     protected lateinit var borderPane: BorderPane
     @FXML
@@ -90,6 +94,12 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
                 sPosBottom.isSelected = heightPosition == HeightPos.S
                 jPosBottom.isSelected = heightPosition == HeightPos.J
             }
+        }
+        descCol.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.description) }
+        numberCol.cellValueFactory = PropertyValueFactory("number")
+        associatedTable.items = associatedProperties
+        if (state.editItem == null) {
+            label.isVisible = false
         }
     }
 

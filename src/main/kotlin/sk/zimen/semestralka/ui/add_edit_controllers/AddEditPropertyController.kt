@@ -1,18 +1,14 @@
 package sk.zimen.semestralka.ui.add_edit_controllers
 
-import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.scene.control.cell.PropertyValueFactory
 import sk.zimen.semestralka.api.service.PropertyService
-import sk.zimen.semestralka.api.types.Parcel
+import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.ui.state.PropertyState
 
 class AddEditPropertyController : AbstractAddEditController<Property>() {
 
     private val propertyService = PropertyService.getInstance()
-
-    private var associatedParcels = FXCollections.observableArrayList<Parcel>()!!
 
     override fun onSave() {
         if (editBefore == null) {
@@ -43,13 +39,8 @@ class AddEditPropertyController : AbstractAddEditController<Property>() {
 
     override fun initState() {
         state = PropertyState.getInstance()
-        descCol.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.description) }
-        numberCol.cellValueFactory = PropertyValueFactory("number")
-        if (state.editItem == null) {
-            associatedTable.isVisible = false
-
-        } else {
-            associatedParcels = FXCollections.observableArrayList(state.editItem?.parcelsForProperty)
+        if (state.editItem != null) {
+            associatedProperties = FXCollections.observableArrayList(state.editItem?.parcelsForProperty as List<Place>)
         }
     }
 }

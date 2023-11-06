@@ -39,9 +39,15 @@ data class Boundary(val topLeft: DoubleArray, val bottomRight: DoubleArray) {
      */
     fun intersects(boundary: Boundary): Boolean {
         return (DoubleUtils.isABetweenBandC(boundary.topLeft[0], topLeft[0], bottomRight[0])
-                || DoubleUtils.isABetweenBandC(boundary.bottomRight[0], topLeft[0], bottomRight[0]))
-                && (DoubleUtils.isABetweenBandC(boundary.topLeft[1], bottomRight[1], topLeft[1])
-                || DoubleUtils.isABetweenBandC(boundary.bottomRight[1], bottomRight[1], topLeft[1]))
+                || DoubleUtils.isABetweenBandC(boundary.bottomRight[0], topLeft[0], bottomRight[0])
+                || DoubleUtils.isABetweenBandC(topLeft[0], boundary.topLeft[0], boundary.bottomRight[0])
+                || DoubleUtils.isABetweenBandC(bottomRight[0], boundary.topLeft[0], boundary.bottomRight[0])
+                )
+            && (DoubleUtils.isABetweenBandC(boundary.topLeft[1], bottomRight[1], topLeft[1])
+                || DoubleUtils.isABetweenBandC(boundary.bottomRight[1], bottomRight[1], topLeft[1])
+                || DoubleUtils.isABetweenBandC(topLeft[1], boundary.topLeft[1], boundary.bottomRight[1])
+                || DoubleUtils.isABetweenBandC(bottomRight[1], boundary.topLeft[1], boundary.bottomRight[1])
+                )
     }
 
     fun space(): Double {
