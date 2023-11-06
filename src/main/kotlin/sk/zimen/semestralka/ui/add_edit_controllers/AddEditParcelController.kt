@@ -8,10 +8,9 @@ import sk.zimen.semestralka.api.types.Parcel
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.ui.state.ParcelState
 
-class AddEditParcelController : AbstractAddEditController<Parcel>() {
+class AddEditParcelController : AbstractAddEditController<Parcel, Property>() {
 
     private val parcelService = ParcelService.getInstance()
-    private var associatedProperties = FXCollections.observableArrayList<Property>()!!
 
     override fun onSave() {
         if (editBefore == null) {
@@ -48,7 +47,8 @@ class AddEditParcelController : AbstractAddEditController<Parcel>() {
             associatedTable.isVisible = false
             label.isVisible = false
         } else {
-            associatedProperties = FXCollections.observableArrayList(state.editItem?.propertiesForParcel)
+            associatedItems = FXCollections.observableArrayList(state.editItem?.propertiesForParcel)
+            associatedTable.items = associatedItems
         }
     }
 }

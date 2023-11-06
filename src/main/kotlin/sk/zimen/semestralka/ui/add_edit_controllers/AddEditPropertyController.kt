@@ -8,11 +8,9 @@ import sk.zimen.semestralka.api.types.Parcel
 import sk.zimen.semestralka.api.types.Property
 import sk.zimen.semestralka.ui.state.PropertyState
 
-class AddEditPropertyController : AbstractAddEditController<Property>() {
+class AddEditPropertyController : AbstractAddEditController<Property, Parcel>() {
 
     private val propertyService = PropertyService.getInstance()
-
-    private var associatedParcels = FXCollections.observableArrayList<Parcel>()!!
 
     override fun onSave() {
         if (editBefore == null) {
@@ -47,9 +45,8 @@ class AddEditPropertyController : AbstractAddEditController<Property>() {
         numberCol.cellValueFactory = PropertyValueFactory("number")
         if (state.editItem == null) {
             associatedTable.isVisible = false
-
         } else {
-            associatedParcels = FXCollections.observableArrayList(state.editItem?.parcelsForProperty)
+            associatedItems = FXCollections.observableArrayList(state.editItem?.parcelsForProperty)
         }
     }
 }

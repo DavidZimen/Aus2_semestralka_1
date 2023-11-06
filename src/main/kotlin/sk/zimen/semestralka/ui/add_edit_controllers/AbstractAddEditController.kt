@@ -1,5 +1,6 @@
 package sk.zimen.semestralka.ui.add_edit_controllers
 
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -15,11 +16,12 @@ import sk.zimen.semestralka.ui.state.AbstractState
 import java.net.URL
 import java.util.*
 
-abstract class AbstractAddEditController<T : Place> : Initializable {
+abstract class AbstractAddEditController<T : Place, K: Place> : Initializable {
 
     protected lateinit var state: AbstractState<T>
     protected var editBefore: T? = null
     protected lateinit var type: String
+    protected var associatedItems = FXCollections.observableArrayList<K>()
     @FXML
     protected lateinit var borderPane: BorderPane
     @FXML
@@ -53,11 +55,11 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
     @FXML
     protected lateinit var header: Label
     @FXML
-    protected lateinit var numberCol: TableColumn<Place, Int>
+    protected lateinit var numberCol: TableColumn<K, Int>
     @FXML
-    protected lateinit var descCol: TableColumn<Place, String>
+    protected lateinit var descCol: TableColumn<K, String>
     @FXML
-    protected lateinit var associatedTable: TableView<Place>
+    protected lateinit var associatedTable: TableView<K>
     @FXML
     protected lateinit var label: Label
 
@@ -91,6 +93,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
                 jPosBottom.isSelected = heightPosition == HeightPos.J
             }
         }
+        associatedTable.items = associatedItems
     }
 
     protected fun getGpsPosition(top: Boolean): GpsPosition {
