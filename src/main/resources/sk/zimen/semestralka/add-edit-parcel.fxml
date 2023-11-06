@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.add_edit_controllers.AddEditParcelController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.add_edit_controllers.AddEditParcelController">
    <top>
       <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="980.0" BorderPane.alignment="CENTER">
          <children>
@@ -202,4 +202,21 @@
          </children>
       </GridPane>
    </center>
+   <bottom>
+      <VBox prefHeight="245.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="label" text="Properties">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TableView fx:id="associatedTable" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="225.0" prefWidth="400.0">
+               <columns>
+                  <TableColumn fx:id="numberCol" editable="false" maxWidth="150.0" prefWidth="150.0" text="Number" />
+                  <TableColumn fx:id="descCol" editable="false" maxWidth="250.0" prefWidth="250.0" text="Description" />
+               </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.add_edit_controllers.AddEditPropertyController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.add_edit_controllers.AddEditPropertyController">
    <top>
       <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="980.0" BorderPane.alignment="CENTER">
          <children>
@@ -37,7 +37,7 @@
       </FlowPane>
    </top>
    <center>
-      <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="520.0" prefWidth="980.0" BorderPane.alignment="TOP_LEFT">
+      <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" BorderPane.alignment="TOP_LEFT">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="160.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="515.0" minWidth="10.0" prefWidth="300.0" />
@@ -52,9 +52,6 @@
             <RowConstraints maxHeight="89.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="86.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="42.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="71.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="49.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Number:">
@@ -202,4 +199,21 @@
          </children>
       </GridPane>
    </center>
+   <bottom>
+      <VBox prefHeight="245.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="label" text="Parcels">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TableView fx:id="associatedTable" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="225.0" prefWidth="400.0">
+              <columns>
+                <TableColumn fx:id="numberCol" editable="false" maxWidth="150.0" prefWidth="150.0" text="Number" />
+                <TableColumn fx:id="descCol" editable="false" maxWidth="250.0" prefWidth="250.0" text="Description" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>

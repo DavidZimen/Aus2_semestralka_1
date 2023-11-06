@@ -10,14 +10,14 @@ internal class QuadTreeTestRandomized {
     @Test
     fun randomizedTest() {
         // prepare tree
-        val itemsCount = 10_000
+        val itemsCount = 100_000
         val tree = AdvancedQuadTree<Place>(10)
         val generator = Generator()
         val items = generator.generateItems(Place::class, itemsCount, tree.root.boundary)
         insertDataToTree(tree, items)
 
         // prepare operations
-        val operationsCount = 500
+        val operationsCount = 5000
         val ratio = intArrayOf(1, 2, 1, 3)  //INSERT, DELETE, EDIT, FIND
         val operations = generator.generateOperations(operationsCount, ratio)
             ?: throw IllegalArgumentException("Wrong number of operations or wrong ratio provided.")
@@ -45,7 +45,6 @@ internal class QuadTreeTestRandomized {
                     testEdit(tree, oldItem, newItem)
                 }
             }
-            println("Remaining: ${operations.size}")
         }
     }
 }

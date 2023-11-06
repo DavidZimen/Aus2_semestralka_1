@@ -29,7 +29,6 @@ fun <T : QuadTreeData> testFind(tree: QuadTree<T>, count: Int = 50) {
             foundItemsSame = emptyList()
         }
         foundItemsInAll = findInWholeTree(tree, boundary)
-        println(foundItemsInAll.size)
         Assertions.assertEquals(foundItemsInAll.size, foundItems.size)
         Assertions.assertEquals(foundItems, foundItemsSame) // order does matter
         Assertions.assertTrue(CollectionUtils.isEqualCollection(foundItems, foundItemsInAll)) //order does not matter

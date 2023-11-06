@@ -52,6 +52,14 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
     protected lateinit var vPosBottom: RadioButton
     @FXML
     protected lateinit var header: Label
+    @FXML
+    protected lateinit var numberCol: TableColumn<Place, Int>
+    @FXML
+    protected lateinit var descCol: TableColumn<Place, String>
+    @FXML
+    protected lateinit var associatedTable: TableView<Place>
+    @FXML
+    protected lateinit var label: Label
 
     abstract fun onSave()
 

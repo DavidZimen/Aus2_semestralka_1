@@ -5,7 +5,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane fx:id="borderPane" prefHeight="580.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.table_controllers.ParcelController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sk.zimen.semestralka.ui.table_controllers.ParcelController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <children>
@@ -101,9 +101,9 @@
                         </HBox>
                     </children>
                 </VBox>
-                <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="381.0">
+                <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" prefHeight="60.0" prefWidth="675.0">
                     <children>
-                        <HBox prefHeight="30.0" prefWidth="172.0">
+                        <HBox prefHeight="30.0" prefWidth="342.0">
                             <children>
                                 <Button fx:id="searchButton" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#search" prefHeight="30.0" prefWidth="61.0" text="Search">
                                     <font>
@@ -150,21 +150,21 @@
         </HBox>
     </top>
     <center>
-        <TableView fx:id="table" layoutX="14.0" layoutY="11.0" prefHeight="570.0" prefWidth="971.0" BorderPane.alignment="CENTER">
+        <TableView fx:id="table" layoutX="14.0" layoutY="11.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="number" editable="false" prefWidth="100.0" text="Number" />
-                <TableColumn fx:id="desc" editable="false" prefWidth="180.0" text="Description" />
+                <TableColumn fx:id="number" editable="false" prefWidth="200.0" text="Number" />
+                <TableColumn fx:id="desc" editable="false" prefWidth="280.0" text="Description" />
                 <TableColumn fx:id="top" prefWidth="75.0" text="Top left coordinate">
                     <columns>
                         <TableColumn fx:id="topWidth" editable="false" prefWidth="75.0" text="Width">
                             <columns>
-                                <TableColumn fx:id="topWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="topWidthValue" editable="false" prefWidth="125.0" sortable="false" text="Value" />
                                 <TableColumn fx:id="topWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
                             </columns>
                         </TableColumn>
                         <TableColumn fx:id="topHeight" editable="false" prefWidth="100.0" text="Height">
                             <columns>
-                                <TableColumn fx:id="topHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="topHeightValue" prefWidth="125.0" text="Value" />
                                 <TableColumn fx:id="topHeightPos" editable="false" prefWidth="75.0" text="Position" />
                             </columns>
                         </TableColumn>
@@ -174,13 +174,13 @@
                     <columns>
                         <TableColumn fx:id="bottomWidth" editable="false" prefWidth="75.0" text="Width">
                             <columns>
-                                <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="100.0" sortable="false" text="Value" />
+                                <TableColumn fx:id="bottomWidthValue" editable="false" prefWidth="125.0" sortable="false" text="Value" />
                                 <TableColumn fx:id="bottomWidthPos" editable="false" prefWidth="75.0" sortable="false" text="Position" />
                             </columns>
                         </TableColumn>
                         <TableColumn fx:id="bottomHeight" editable="false" prefWidth="100.0" text="Height">
                             <columns>
-                                <TableColumn fx:id="bottomHeightValue" prefWidth="100.0" text="Value" />
+                                <TableColumn fx:id="bottomHeightValue" prefWidth="125.0" text="Value" />
                                 <TableColumn fx:id="bottomHeightPos" editable="false" prefWidth="75.0" text="Position" />
                             </columns>
                         </TableColumn>

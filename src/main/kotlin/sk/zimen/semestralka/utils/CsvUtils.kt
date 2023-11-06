@@ -28,6 +28,10 @@ object CsvUtils {
         } catch (_: FileAlreadyExistsException) { }
     }
 
+    /**
+     * Uses kotlin-reflection library to get all
+     * properties, that are not annotated with [CsvExclude].
+     */
     fun <T : Any> writeDataToCSV(fileName: String, clazz: KClass<T>, data: List<T>) {
         if (data.isEmpty()) return
 
@@ -41,6 +45,12 @@ object CsvUtils {
         File(DIRECTORY, fileName).writeText(csvData)
     }
 
+    /**
+     * With kotlin reflection library creates instances of [clazz].
+     * Then sets its attributes to loaded data, based on header.
+     * Header must match property name.
+     * Supports reading of [String], [Int], [Double] and simple string [Enum] values.
+     */
     fun <T : Any> readDataFromCSV(fileName: String, clazz: KClass<T>): MutableList<T> {
         val lines = File(DIRECTORY, fileName).readText().lines()
         val objects = mutableListOf<T>()
@@ -80,6 +90,10 @@ object CsvUtils {
         return objects
     }
 
+    /**
+     * Returns properties of [clazz], that are mot annotated with [CsvExclude].
+     * All item must be mutable for this function to work.
+     */
     private fun <T : Any> getValidProperties(clazz: KClass<T>): List<KMutableProperty1<T, *>> {
         return clazz.memberProperties
             .filter { it.findAnnotation<CsvExclude>() == null }
