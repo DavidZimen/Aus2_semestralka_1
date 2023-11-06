@@ -23,7 +23,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
     protected lateinit var state: AbstractState<T>
     protected var editBefore: T? = null
     protected lateinit var type: String
-    protected var associatedProperties = FXCollections.observableArrayList<Place>()!!
+    protected var associatedItems = FXCollections.observableArrayList<Place>()!!
     @FXML
     protected lateinit var borderPane: BorderPane
     @FXML
@@ -97,7 +97,7 @@ abstract class AbstractAddEditController<T : Place> : Initializable {
         }
         descCol.setCellValueFactory { cellData -> SimpleStringProperty(cellData.value.description) }
         numberCol.cellValueFactory = PropertyValueFactory("number")
-        associatedTable.items = associatedProperties
+        associatedTable.items = associatedItems
         if (state.editItem == null) {
             label.isVisible = false
         }

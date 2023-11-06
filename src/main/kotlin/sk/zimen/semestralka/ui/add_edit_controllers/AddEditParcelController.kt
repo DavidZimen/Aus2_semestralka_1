@@ -40,7 +40,7 @@ class AddEditParcelController : AbstractAddEditController<Parcel>() {
     override fun initState() {
         state = ParcelState.getInstance()
         if (state.editItem != null) {
-            associatedProperties = FXCollections.observableArrayList(state.editItem?.propertiesForParcel as List<Place>)
+            associatedItems = FXCollections.observableArrayList(state.editItem?.propertiesForParcel as List<Place>)
         }
     }
 }
