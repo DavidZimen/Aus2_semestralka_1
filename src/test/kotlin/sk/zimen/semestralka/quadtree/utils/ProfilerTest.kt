@@ -4,16 +4,19 @@ import org.junit.jupiter.api.Test
 import sk.zimen.semestralka.api.types.Place
 import sk.zimen.semestralka.quadtree.AdvancedQuadTree
 import sk.zimen.semestralka.quadtree.ClassicQuadTree
+import sk.zimen.semestralka.utils.Generator
 
 internal class ProfilerTest {
     @Test
     fun profilerTest() {
         val badHealth = true
+        val optimiseNormal = false
         val treeItemsCount = 50_000
         val numberOfOperations = 10_000
         var advancedTree = AdvancedQuadTree<Place>(10)
         var classicTree = ClassicQuadTree<Place>(10)
-        val generator = prepareGenerator(advancedTree, badHealth)
+//        val generator = prepareGenerator(advancedTree, badHealth)
+        val generator = Generator()
         val random = generator.random
 
         // initialize tree
@@ -48,7 +51,6 @@ internal class ProfilerTest {
             advancedTree.delete(deleteItem)
         }
 
-        if (!badHealth) return
 
         // optimise trees
         items.addAll(delItems)
@@ -56,8 +58,13 @@ internal class ProfilerTest {
         classicTree = ClassicQuadTree(10)
         insertDataToTree(advancedTree, items)
         insertDataToTree(classicTree, items)
-        advancedTree.optimise()
-        classicTree.optimise()
+        if (optimiseNormal) {
+            advancedTree.optimise()
+            classicTree.optimise()
+        } else {
+            advancedTree.optimiseByFourLargest()
+            advancedTree.optimiseByFourLargest()
+        }
         println("AdvancedTree health optimised: ${advancedTree.health}")
         println("ClassicTree health optimised: ${advancedTree.health}")
 

@@ -6,6 +6,7 @@ import sk.zimen.semestralka.quadtree.boundary.Position
 import sk.zimen.semestralka.quadtree.interfaces.QuadTreeData
 import sk.zimen.semestralka.quadtree.metrics.*
 import sk.zimen.semestralka.quadtree.node.Node
+import sk.zimen.semestralka.utils.DoubleUtils
 import kotlin.math.abs
 
 /**
@@ -169,6 +170,50 @@ abstract class QuadTree<T : QuadTreeData> (
             }
         }
         return false
+    }
+
+    fun optimiseByFourLargest() {
+        val enlargingFactor = 0.2
+        val largest: Array<Any?> = arrayOfNulls(4)
+        for (node in this.root.iterator()) {
+            for (data in node.dataIterator()) {
+                val space = data.getBoundary().space()
+                for (i in largest.indices) {
+                    if (largest[i] == null) largest[i] = data
+                    if (DoubleUtils.isAGreaterThanB(space, (largest[0] as T).getBoundary().space())) {
+                        largest[i] = data
+                    }
+                }
+            }
+        }
+
+        var newTopX = root.boundary.topLeft[0]
+        var newTopY = root.boundary.topLeft[1]
+        var newBottomX = root.boundary.bottomRight[0]
+        var newBottomY = root.boundary.bottomRight[1]
+
+        var newRoot = createRoot(newTopX, newTopY, newBottomX, newBottomY)
+        var childCount = newRoot.childrenCount()
+        for (i in 0 until 100) {
+            for (data in largest) {
+                newRoot.insert(data as T, maxAllowedDepth)
+            }
+            val newChildCount = root.childrenCount()
+            if (newChildCount > childCount) childCount = newChildCount
+            newTopX -= abs(newTopX) * enlargingFactor
+            newTopY += abs(newTopY) * enlargingFactor
+            newBottomX += abs(newBottomX) * enlargingFactor
+            newBottomY -= abs(newBottomY) * enlargingFactor
+            if (childCount != 4) {
+                newRoot = createRoot(newTopX, newTopY, newBottomX, newBottomY)
+            } else {
+                break
+            }
+        }
+
+        changeParameters(maxAllowedDepth, newTopX, newTopY, newBottomX, newBottomY)
+        updateHealth(metrics())
+        println("TopX: $newTopX, TopY: $newTopY, BottomX: $newBottomY, BottomY: $newBottomY")
     }
 
     /**

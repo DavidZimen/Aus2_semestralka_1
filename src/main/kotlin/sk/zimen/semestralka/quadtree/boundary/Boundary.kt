@@ -2,6 +2,7 @@ package sk.zimen.semestralka.quadtree.boundary
 
 import sk.zimen.semestralka.quadtree.exceptions.BoundaryException
 import sk.zimen.semestralka.utils.DoubleUtils
+import kotlin.math.abs
 
 /**
  * Represents boundary of the Node in QuadTree.
@@ -41,6 +42,10 @@ data class Boundary(val topLeft: DoubleArray, val bottomRight: DoubleArray) {
                 || DoubleUtils.isABetweenBandC(boundary.bottomRight[0], topLeft[0], bottomRight[0]))
                 && (DoubleUtils.isABetweenBandC(boundary.topLeft[1], bottomRight[1], topLeft[1])
                 || DoubleUtils.isABetweenBandC(boundary.bottomRight[1], bottomRight[1], topLeft[1]))
+    }
+
+    fun space(): Double {
+        return abs((abs(topLeft[0]) - abs(bottomRight[0]))) * abs((abs(topLeft[1]) - abs(bottomRight[1])))
     }
 
     /**
